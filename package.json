@@ -1,0 +1,13 @@
+{
+  "name": "hyrox",
+  "private": true,
+  "description": "Repo root for Vercel: Next.js app lives in hyrox-tracker/.",
+  "dependencies": {
+    "next": "16.2.3"
+  },
+  "scripts": {
+    "build": "npm ci --prefix hyrox-tracker && npm run build --prefix hyrox-tracker",
+    "dev": "npm run dev --prefix hyrox-tracker",
+    "lint": "npm run lint --prefix hyrox-tracker"
+  }
+}

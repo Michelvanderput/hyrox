@@ -31,6 +31,14 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
+De GitHub-repo heeft de Next-app in **`hyrox-tracker/`**. Er staat een **`vercel.json` in de repository-root** die `npm ci` en `next build` daar uitvoert.
+
+1. Koppel de **hele repo** (`Michelvanderput/hyrox`).
+2. Onder **Settings → General → Root Directory**: laat dit **leeg** of zet op **`.`** (niet `hyrox-tracker`). Anders worden de root-`vercel.json` en `package.json` genegeerd en krijg je vaak een **404**.
+3. **Framework preset**: Next.js (automatisch als `next` in de root-`package.json` staat).
+
+Lokaal vanaf de monorepo-root bouwen: `npm run build` (in de repo-root, niet alleen in `hyrox-tracker/`).
+
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
