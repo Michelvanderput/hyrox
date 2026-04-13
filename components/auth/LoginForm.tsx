@@ -59,7 +59,7 @@ export function LoginForm() {
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
       options: {
-        emailRedirectTo: `${origin}/auth/callback?next=/profile`,
+        emailRedirectTo: `${origin}/auth/callback?next=/`,
       },
     });
     setBusy(null);
@@ -91,7 +91,7 @@ export function LoginForm() {
       setMsg(error.message);
       return;
     }
-    window.location.assign("/profile");
+    window.location.assign("/");
   };
 
   return (
@@ -99,10 +99,9 @@ export function LoginForm() {
       <h1 className="font-heading text-2xl font-black">Login</h1>
       <p className="text-sm text-muted">
         <span className="font-semibold text-ink/90">Eerste keer:</span> vraag een magic link.{" "}
-        <span className="font-semibold text-ink/90">Daarna:</span> op{" "}
-        <span className="font-semibold text-ink/90">Profiel</span> kun je een wachtwoord instellen
-        en hieronder mee inloggen. Op Profiel start je je duo-team — daar zie je de teamcode. Je
-        partner opent bijvoorbeeld{" "}
+        <span className="font-semibold text-ink/90">Daarna:</span> onder{" "}
+        <span className="font-semibold text-ink/90">Profiel & team</span> stel je een wachtwoord in
+        en start je je duo-team (invite-link). Je partner opent bijvoorbeeld{" "}
         <code className="rounded bg-canvas px-1 py-0.5 text-xs text-gold">/invite/teamcode</code>{" "}
         (met jullie echte code).
       </p>

@@ -11,7 +11,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/env";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  const nextParam = url.searchParams.get("next") ?? "/profile";
+  const nextParam = url.searchParams.get("next") ?? "/";
   const next = nextParam.startsWith("/") ? nextParam : `/${nextParam}`;
 
   if (!code) {

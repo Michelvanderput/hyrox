@@ -120,6 +120,7 @@ export async function completeOnboardingAction(input: {
       return { ok: false, error: error?.message ?? "Opslaan mislukt." };
     }
 
+    revalidatePath("/");
     revalidatePath("/profile");
     revalidatePath("/onboarding");
     revalidatePath("/plan");
@@ -131,6 +132,58 @@ export async function completeOnboardingAction(input: {
         inviteCode,
       },
     };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Opslaan mislukt.";
+    return { ok: false, error: msg };
+  }
+}
+
+export async function updateMyProfileBasicsAction(input: {
+  name: string;
+  gender: "male" | "female" | "other";
+  runLevel: 1 | 2 | 3;
+  strengthLevel: 1 | 2 | 3;
+}): Promise<ActionResult<{ profile: ProfileRow }>> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return { ok: false, error: "Je bent niet ingelogd." };
+    }
+
+    const name = input.name.trim();
+    if (name.length < 2) {
+      return { ok: false, error: "Vul een naam in (minimaal 2 tekens)." };
+    }
+
+    const fitnessLevel = deriveFitnessLevel(input.runLevel, input.strengthLevel);
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .update({
+        name,
+        gender: input.gender,
+        fitness_level: fitnessLevel,
+        run_level: input.runLevel,
+        strength_level: input.strengthLevel,
+      })
+      .eq("id", user.id)
+      .select("*")
+      .maybeSingle();
+
+    if (error) {
+      return { ok: false, error: error.message };
+    }
+    if (!data) {
+      return { ok: false, error: "Profiel niet gevonden. Probeer opnieuw in te loggen." };
+    }
+
+    revalidatePath("/");
+    revalidatePath("/profile");
+    revalidatePath("/onboarding");
+    return { ok: true, data: { profile: data as ProfileRow } };
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Opslaan mislukt.";
     return { ok: false, error: msg };

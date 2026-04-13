@@ -8,34 +8,11 @@ import { completeOnboardingAction, getMyProfileAction } from "@/app/actions/prof
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { appToast } from "@/lib/toast-store";
-
-const GENDERS = [
-  { id: "male" as const, label: "Man (open-gewichten)" },
-  { id: "female" as const, label: "Vrouw (open-gewichten)" },
-  { id: "other" as const, label: "Anders / liever niet zeggen" },
-];
-
-const LEVELS = [
-  { id: "beginner" as const, label: "Beginner", hint: "Nieuw met HYROX of conditioneel starten." },
-  {
-    id: "intermediate" as const,
-    label: "Gemiddeld",
-    hint: "Regelmatig trainen, klaar om volume op te bouwen.",
-  },
-  {
-    id: "advanced" as const,
-    label: "Gevorderd",
-    hint: "Sterke basis, race-pace en zware blocks zijn bekend.",
-  },
-];
-
-function fitnessToIntensity(
-  l: "beginner" | "intermediate" | "advanced",
-): { run: 1 | 2 | 3; strength: 1 | 2 | 3 } {
-  if (l === "beginner") return { run: 1, strength: 1 };
-  if (l === "advanced") return { run: 3, strength: 3 };
-  return { run: 2, strength: 2 };
-}
+import {
+  PROFILE_GENDERS,
+  PROFILE_LEVELS,
+  fitnessLevelToRunStrength,
+} from "@/lib/profile-basics";
 
 export function OnboardingForm() {
   const router = useRouter();
@@ -97,7 +74,7 @@ export function OnboardingForm() {
       return;
     }
     startUiTransition(async () => {
-      const { run, strength } = fitnessToIntensity(level);
+      const { run, strength } = fitnessLevelToRunStrength(level);
       const res = await completeOnboardingAction({
         name,
         gender,
@@ -110,7 +87,7 @@ export function OnboardingForm() {
         return;
       }
       appToast.success("Profiel opgeslagen. Veel succes met het plan!");
-      router.replace("/profile");
+      router.replace("/");
       router.refresh();
     });
   };
@@ -171,7 +148,7 @@ export function OnboardingForm() {
         <h2 className="font-heading text-sm font-bold text-ink">Geslacht</h2>
         <p className="mt-1 text-[11px] text-muted">Voor standaard HYROX open-gewichten in uitleg.</p>
         <div className="mt-4 grid gap-2">
-          {GENDERS.map((g) => (
+          {PROFILE_GENDERS.map((g) => (
             <label
               key={g.id}
               className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border px-3 text-sm transition ${
@@ -196,7 +173,7 @@ export function OnboardingForm() {
         <h2 className="font-heading text-sm font-bold text-ink">Trainingsniveau</h2>
         <p className="mt-1 text-[11px] text-muted">Gebruikt voor toon en toekomstige presets.</p>
         <div className="mt-4 grid gap-2">
-          {LEVELS.map((lv) => (
+          {PROFILE_LEVELS.map((lv) => (
             <label
               key={lv.id}
               className={`flex min-h-11 cursor-pointer flex-col gap-0.5 rounded-xl border px-3 py-2 text-sm transition ${

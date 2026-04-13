@@ -17,6 +17,7 @@ import { useTrackerStore } from "@/lib/store";
 import { useTrainingCloud } from "@/context/TrainingCloudContext";
 import { TeamSetupCard } from "@/components/profile/TeamSetupCard";
 import { TeamSwitcherCard } from "@/components/profile/TeamSwitcherCard";
+import { ProfileBasicsEditor } from "@/components/profile/ProfileBasicsEditor";
 import { UserSessionCard } from "@/components/profile/UserSessionCard";
 
 export function ProfileDashboard() {
@@ -74,16 +75,18 @@ export function ProfileDashboard() {
 
       {cloudUserId && (
         <section className="rounded-2xl border border-edge bg-panel p-4 sm:p-5">
-          <h2 className="font-heading text-sm font-bold">Accountgegevens</h2>
+          <h2 className="font-heading text-sm font-bold">Jouw gegevens</h2>
           <p className="mt-1 text-sm text-muted">
-            Naam, geslacht (voor station-gewichten) en trainingsniveau kun je hier bijwerken.
+            Dit is <span className="font-semibold text-ink">jouw</span> profiel in de app (naam +
+            niveau). Na opslaan zie je het direct op het dashboard en in het team.
           </p>
-          <Link
-            href="/onboarding"
-            className="mt-3 inline-flex min-h-11 items-center rounded-xl border border-edge-hover bg-canvas px-4 text-sm font-semibold text-ink"
-          >
-            Profiel bewerken
-          </Link>
+          <ProfileBasicsEditor />
+          <p className="mt-4 text-[11px] text-faint">
+            Eerste keer instellen?{" "}
+            <Link href="/onboarding" className="text-muted underline underline-offset-2">
+              Volledige onboarding
+            </Link>
+          </p>
         </section>
       )}
 

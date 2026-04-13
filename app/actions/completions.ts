@@ -58,6 +58,7 @@ export async function upsertMyCompletionAction(
     }
 
     revalidatePath("/plan");
+    revalidatePath("/");
     revalidatePath("/profile");
     return { ok: true, data: { id: data.id } };
   } catch (e) {

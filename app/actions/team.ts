@@ -37,6 +37,7 @@ export async function createTeamAction(
       return { ok: false, error: memberError.message };
     }
 
+    revalidatePath("/");
     revalidatePath("/profile");
     return { ok: true, data: { inviteCode: team.invite_code, teamId: team.id } };
   } catch (e) {
@@ -64,6 +65,7 @@ export async function joinTeamByCodeAction(
       return { ok: false, error: "Kon team niet joinen." };
     }
 
+    revalidatePath("/");
     revalidatePath("/profile");
     const teamId = data as string;
     return { ok: true, data: { teamId } };

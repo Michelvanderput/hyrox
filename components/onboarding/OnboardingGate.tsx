@@ -60,7 +60,7 @@ export function OnboardingGate({ children }: { children: React.ReactNode }) {
           className="size-10 rounded-full border-2 border-edge border-t-gold animate-spin"
           aria-hidden
         />
-        <p className="text-sm text-muted">Profiel en team-workspace voorbereiden…</p>
+        <p className="text-sm text-muted">Dashboard voorbereiden…</p>
       </div>
     );
   }

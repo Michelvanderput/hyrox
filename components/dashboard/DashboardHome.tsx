@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 
+import { resolveMyAthleteIndex } from "@/lib/athlete-ui";
 import { EVENT_UI } from "@/lib/constants";
 import { getCurrentWeekNumber } from "@/lib/training-plan";
 import { useTrackerStore } from "@/lib/store";
 
+import { DashboardIdentityStrip } from "@/components/dashboard/DashboardIdentityStrip";
 import { CountdownTimer } from "@/components/dashboard/CountdownTimer";
 import { TeammateMotivationCard } from "@/components/dashboard/TeammateMotivationCard";
 import { AthleteRingCard } from "@/components/dashboard/AthleteRingCard";
@@ -16,8 +18,15 @@ import { NeonProgressBar } from "@/components/ui/NeonProgressBar";
 export function DashboardHome() {
   const week = getCurrentWeekNumber();
   const names = useTrackerStore((s) => s.athleteNames);
+  const viewerUserId = useTrackerStore((s) => s.viewerUserId);
+  const memberUserIds = useTrackerStore((s) => s.memberUserIds);
   const getTotalProgress = useTrackerStore((s) => s.getTotalProgress);
   const getWeekProgress = useTrackerStore((s) => s.getWeekProgress);
+
+  const myAthlete = resolveMyAthleteIndex(memberUserIds, viewerUserId);
+  const ringOrder: (0 | 1)[] = myAthlete === 1 ? [1, 0] : [0, 1];
+  const displayNameForInitial =
+    myAthlete !== null ? names[myAthlete] : names[0];
 
   const t0 = getTotalProgress(0);
   const t1 = getTotalProgress(1);
@@ -30,7 +39,7 @@ export function DashboardHome() {
   const weekPct =
     w0.total > 0 ? Math.round(((w0.done + w1.done) / (2 * w0.total)) * 100) : 0;
 
-  const initial = (names[0]?.trim()?.[0] || "H").toUpperCase();
+  const initial = (displayNameForInitial?.trim()?.[0] || "H").toUpperCase();
 
   return (
     <div className="space-y-6 pb-6">
@@ -72,6 +81,8 @@ export function DashboardHome() {
         </div>
       </header>
 
+      <DashboardIdentityStrip />
+
       <NeonProgressBar value={weekPct} className="h-1.5" />
 
       <Link
@@ -98,8 +109,9 @@ export function DashboardHome() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <AthleteRingCard athleteIndex={0} weekNumber={week} />
-        <AthleteRingCard athleteIndex={1} weekNumber={week} />
+        {ringOrder.map((ai) => (
+          <AthleteRingCard key={ai} athleteIndex={ai} weekNumber={week} />
+        ))}
       </div>
 
       <PhaseBanner weekNumber={week} />

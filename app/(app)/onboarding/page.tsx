@@ -7,10 +7,10 @@ export default function OnboardingPage() {
     <div className="pb-8 pt-2">
       <div className="mb-6 flex items-center justify-between gap-3">
         <Link
-          href="/profile"
+          href="/"
           className="text-[11px] font-semibold uppercase tracking-wide text-muted hover:text-ink"
         >
-          ← Profiel
+          ← Dashboard
         </Link>
       </div>
       <OnboardingForm />
