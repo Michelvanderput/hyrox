@@ -47,7 +47,8 @@ export function InviteJoinPanel({
         return;
       }
       writeActiveTeamId(res.data.teamId);
-      setMsg("Je zit nu in het team. Ga naar je profiel voor details.");
+      window.dispatchEvent(new Event("hyrox-workspace-refresh"));
+      setMsg("Je zit nu in het team. Open het dashboard of profiel om je duo te zien.");
     });
   };
 
@@ -79,6 +80,11 @@ export function InviteJoinPanel({
 
   return (
     <div className="space-y-4">
+      <p className="rounded-xl border border-edge bg-canvas px-3 py-2 text-xs text-muted">
+        Je wordt lid van hetzelfde <span className="font-semibold text-ink">cloud-team</span> als
+        degene die de code heeft aangemaakt. Daarna kun je samen het plan afvinken (iedereen alleen
+        de eigen kolom).
+      </p>
       <dl className="grid gap-2 rounded-2xl border border-edge bg-canvas p-4 text-sm">
         <div className="flex justify-between gap-3">
           <dt className="text-muted">Team</dt>

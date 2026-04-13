@@ -29,6 +29,13 @@ export default async function InvitePage({
         <p className="text-sm text-muted">
           Code: <span className="font-mono text-gold">{normalized}</span>
         </p>
+        <p className="text-xs leading-relaxed text-muted">
+          Heb je nog geen account? Ga eerst naar{" "}
+          <Link href="/login" className="font-semibold text-gold underline-offset-2 hover:underline">
+            Login
+          </Link>
+          , kom daarna terug naar deze pagina en klik op <strong>Join dit team</strong>.
+        </p>
 
         {!supabase && (
           <p className="text-sm text-muted">
