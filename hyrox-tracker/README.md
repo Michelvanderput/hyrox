@@ -35,7 +35,7 @@ De GitHub-repo heeft de Next-app in **`hyrox-tracker/`**. Er staat een **`vercel
 
 1. Koppel de **hele repo** (`Michelvanderput/hyrox`).
 2. **Root Directory** mag **`.`** (repo-root) **of** **`hyrox-tracker`**: die `vercel.json` gebruikt automatisch `npm install` / `build` met of zonder `--prefix hyrox-tracker`.
-3. **Framework preset**: Next.js (automatisch als `next` in de root-`package.json` staat).
+3. **Framework preset**: **Next.js** (handmatig kiezen als Vercel “No Next.js version detected” meldt).
 
 Lokaal vanaf de monorepo-root bouwen: `npm run build` (in de repo-root, niet alleen in `hyrox-tracker/`).
 
