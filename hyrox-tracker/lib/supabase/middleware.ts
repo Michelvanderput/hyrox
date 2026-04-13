@@ -13,24 +13,33 @@ export async function updateSession(request: NextRequest) {
     return response;
   }
 
-  const supabase = createServerClient<Database>(url, key, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
+  try {
+    const supabase = createServerClient<Database>(url, key, {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet, headers) {
+          cookiesToSet.forEach(({ name, value }) => {
+            request.cookies.set(name, value);
+          });
+          response = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) => {
+            response.cookies.set(name, value, options);
+          });
+          Object.entries(headers).forEach(([headerName, headerValue]) => {
+            response.headers.set(headerName, headerValue);
+          });
+        },
       },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value }) => {
-          request.cookies.set(name, value);
-        });
-        response = NextResponse.next({ request });
-        cookiesToSet.forEach(({ name, value, options }) => {
-          response.cookies.set(name, value, options);
-        });
-      },
-    },
-  });
+    });
 
-  await supabase.auth.getUser();
+    // Prefer getSession() over getUser() in middleware: getUser() re-throws
+    // session errors and always hits the auth server, which can 500 the edge.
+    await supabase.auth.getSession();
+  } catch {
+    response = NextResponse.next({ request });
+  }
 
   return response;
 }
