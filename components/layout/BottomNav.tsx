@@ -4,6 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CalendarDays, Dumbbell, Home, LayoutGrid, TrendingUp, UserRound } from "lucide-react";
 
+import { getCurrentWeekNumber } from "@/lib/training-plan";
+import { useTrackerStore } from "@/lib/store";
+
 const NAV = [
   { href: "/", label: "Home", Icon: Home },
   { href: "/workout/vandaag", label: "Vandaag", Icon: CalendarDays },
@@ -15,6 +18,7 @@ const NAV = [
 
 export function BottomNav() {
   const pathname = usePathname();
+  const setSelectedWeek = useTrackerStore((s) => s.setSelectedWeek);
 
   return (
     <nav
@@ -28,11 +32,19 @@ export function BottomNav() {
               ? pathname === "/"
               : pathname === item.href || pathname.startsWith(`${item.href}/`);
           const Icon = item.Icon;
+          const isPlan = item.href === "/plan";
           return (
             <Link
               key={item.href}
               href={item.href}
               title={item.label}
+              onClick={
+                isPlan
+                  ? () => {
+                      setSelectedWeek(getCurrentWeekNumber());
+                    }
+                  : undefined
+              }
               className={`flex min-h-12 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-1 text-[8px] font-semibold leading-tight tracking-wide transition-all sm:min-h-11 sm:gap-0.5 sm:py-1.5 sm:text-[10px] ${
                 active
                   ? "text-neon-hot drop-shadow-[0_0_12px_rgba(212,255,0,0.35)]"

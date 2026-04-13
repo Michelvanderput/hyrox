@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useLayoutEffect, useState, useCallback } from "react";
 import { motion, useReducedMotion, PanInfo } from "framer-motion";
 
 import { TOTAL_WEEKS } from "@/lib/constants";
@@ -16,18 +16,13 @@ import { PhaseBanner } from "@/components/dashboard/PhaseBanner";
 import { WeekSelector } from "@/components/plan/WeekSelector";
 import { DayRow } from "@/components/plan/DayRow";
 
-export function PlanClient({
-  initialWeekFromUrl,
-}: {
-  initialWeekFromUrl?: number;
-} = {}) {
+export function PlanClient({ initialWeek }: { initialWeek: number }) {
   const reduce = useReducedMotion();
   const selectedWeek = useTrackerStore((s) => s.selectedWeek);
   const setSelectedWeek = useTrackerStore((s) => s.setSelectedWeek);
   const getDayOrderForWeek = useTrackerStore((s) => s.getDayOrderForWeek);
   const swapWeekDayVisualPositions = useTrackerStore((s) => s.swapWeekDayVisualPositions);
   const resetWeekDayOrder = useTrackerStore((s) => s.resetWeekDayOrder);
-  const appliedUrlWeek = useRef(false);
   const cw = getCurrentWeekNumber();
   const phase = getPhaseForWeek(selectedWeek);
   const days = generateWeek(selectedWeek);
@@ -53,14 +48,10 @@ export function PlanClient({
     [selectedWeek, swapPickVisual, swapWeekDayVisualPositions],
   );
 
-  useEffect(() => {
-    if (appliedUrlWeek.current) return;
-    if (initialWeekFromUrl == null || Number.isNaN(initialWeekFromUrl)) return;
-    if (initialWeekFromUrl >= 1 && initialWeekFromUrl <= TOTAL_WEEKS) {
-      setSelectedWeek(initialWeekFromUrl);
-    }
-    appliedUrlWeek.current = true;
-  }, [initialWeekFromUrl, setSelectedWeek]);
+  useLayoutEffect(() => {
+    const w = Math.max(1, Math.min(TOTAL_WEEKS, initialWeek));
+    setSelectedWeek(w);
+  }, [initialWeek, setSelectedWeek]);
 
   const go = (delta: number) => {
     clearSwapPick();

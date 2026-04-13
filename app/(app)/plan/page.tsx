@@ -1,3 +1,5 @@
+import { TOTAL_WEEKS } from "@/lib/constants";
+import { getCurrentWeekNumber } from "@/lib/training-plan";
 import { PlanClient } from "@/components/plan/PlanClient";
 
 type Props = {
@@ -7,11 +9,16 @@ type Props = {
 export default async function PlanPage({ searchParams }: Props) {
   const sp = await searchParams;
   const raw = sp.week;
-  let initialWeekFromUrl: number | undefined;
+  let fromUrl: number | undefined;
   if (raw !== undefined && raw !== "") {
     const n = Number.parseInt(raw, 10);
-    initialWeekFromUrl = Number.isFinite(n) ? n : undefined;
+    if (Number.isFinite(n)) fromUrl = n;
   }
+  if (fromUrl != null && (fromUrl < 1 || fromUrl > TOTAL_WEEKS)) {
+    fromUrl = undefined;
+  }
+  /** Zonder ?week= altijd de actuele trainingsweek (nieuw bezoek / Plan in menu). */
+  const initialWeek = fromUrl ?? getCurrentWeekNumber();
 
-  return <PlanClient initialWeekFromUrl={initialWeekFromUrl} />;
+  return <PlanClient initialWeek={initialWeek} />;
 }
