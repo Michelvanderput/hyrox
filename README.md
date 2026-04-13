@@ -31,11 +31,14 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
-De Next-app staat nu in de **repository-root** (één `package.json` met `next` — geen submap meer).
+De Next-app staat in de **repository-root** (één `package.json` met `next`). Er staat een minimale **`vercel.json`** met `"framework": "nextjs"`.
 
 1. Koppel de repo **Michelvanderput/hyrox**.
-2. **Settings → General → Root Directory**: **`.`** (leeg laten = root van de repo).
-3. **Framework preset**: **Next.js** (autodetect zou moeten werken).
+2. **Settings → General → Root Directory**: **leeg** of **`.`** (niet een oude submap).
+3. **Settings → Build & Deployment → Framework Preset**: **Next.js** (niet “Other”).
+4. **Zelfde scherm → Output Directory**: **leeg laten** (geen `out`, `dist`, `.next` of `hyrox-tracker/...`). Voor Next.js vult Vercel dat zelf in; een verkeerde map geeft vaak **404** na een geslaagde build ([Vercel uitleg](https://vercel.com/guides/why-is-my-deployed-project-giving-404)).
+
+Productiebuild gebruikt **`next build --webpack`** (stabieler op Vercel dan de Turbopack-default bij sommige projecten).
 
 Lokaal: `npm install` en `npm run dev` / `npm run build` in de repo-root.
 
