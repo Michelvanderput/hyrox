@@ -1,13 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { RACE_CONFIG, EVENT_UI } from "@/lib/constants";
 import { formatRaceCountdown } from "@/lib/utils";
+import { useTrainingCloud } from "@/context/TrainingCloudContext";
 
 const RACE_AT = new Date(`${RACE_CONFIG.date}T08:00:00`);
 
 export function CountdownTimer() {
+  const { teams, activeTeamId, userId } = useTrainingCloud();
+  const activeTeamName = useMemo(() => {
+    if (!userId || !teams.length) return null;
+    const id =
+      activeTeamId && teams.some((t) => t.id === activeTeamId) ? activeTeamId : teams[0]!.id;
+    return teams.find((t) => t.id === id)?.name?.trim() || null;
+  }, [teams, activeTeamId, userId]);
+
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
@@ -54,6 +63,9 @@ export function CountdownTimer() {
           ))}
         </div>
         <p className="mt-3 text-[11px] text-muted">{EVENT_UI.dateLineLong}</p>
+        {activeTeamName ? (
+          <p className="mt-2 truncate text-[11px] text-muted">{activeTeamName}</p>
+        ) : null}
       </div>
     </div>
   );

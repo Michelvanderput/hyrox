@@ -10,6 +10,8 @@ import {
 } from "@/lib/profile-basics";
 import { appToast } from "@/lib/toast-store";
 
+import { AccountPasswordForm } from "@/components/profile/AccountPasswordForm";
+
 type BasicsSnapshot = {
   name: string;
   gender: "male" | "female" | "other" | "";
@@ -223,6 +225,10 @@ export function ProfileBasicsEditor() {
         {pending ? "Opslaan…" : "Gegevens opslaan"}
       </button>
     </form>
+
+      <div className="mt-6 border-t border-edge pt-5">
+        <AccountPasswordForm />
+      </div>
     </div>
   );
 }

@@ -15,7 +15,7 @@ export default function StationsPage() {
         </h1>
         <p className="mt-1 text-sm text-muted">
           Alle 8 HYROX stations met specs (open vs pro), techniektips, en per station extra uitleg +
-          suggestie-oefeningen — tik op een kaart voor &quot;Meer info&quot;.
+          suggestie-oefeningen — open het venster via &quot;Meer info & oefeningen&quot;.
         </p>
       </header>
 

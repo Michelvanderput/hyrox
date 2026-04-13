@@ -116,24 +116,6 @@ export function DashboardHome() {
       <PhaseBanner weekNumber={week} />
 
       <HomeWeekPreview weekNumber={week} compact />
-
-      <div className="flex flex-wrap gap-2">
-        <Link href="/plan" className="hyrox-btn-primary inline-flex min-h-11 flex-1 items-center justify-center px-5 text-sm sm:flex-none">
-          Weekplan
-        </Link>
-        <Link
-          href="/stations"
-          className="hyrox-btn-ghost inline-flex min-h-11 flex-1 items-center justify-center px-5 text-sm font-semibold sm:flex-none"
-        >
-          Stations
-        </Link>
-        <Link
-          href="/prs"
-          className="hyrox-btn-ghost inline-flex min-h-11 flex-1 items-center justify-center px-5 text-sm font-semibold sm:flex-none"
-        >
-          PR’s
-        </Link>
-      </div>
     </div>
   );
 }
