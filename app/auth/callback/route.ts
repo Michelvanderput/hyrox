@@ -30,11 +30,16 @@ export async function GET(request: Request) {
   const supabase = createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
     cookies: {
       getAll() {
-        return parseCookieHeader(request.headers.get("cookie") ?? "");
+        return parseCookieHeader(request.headers.get("cookie") ?? "").map(
+          ({ name, value }) => ({ name, value: value ?? "" }),
+        );
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet, headers) {
         cookiesToSet.forEach(({ name, value, options }) => {
           response.cookies.set(name, value, options);
+        });
+        Object.entries(headers).forEach(([key, value]) => {
+          response.headers.set(key, value);
         });
       },
     },
