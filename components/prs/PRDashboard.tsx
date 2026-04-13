@@ -63,7 +63,7 @@ export function PRDashboard() {
           </span>
         </h1>
         <p className="mt-1 text-sm text-muted">
-          Log tijden (seconden) om trends te zien. Later: sync met Supabase + vergelijk met partner.
+          Log tijden (seconden) om trends te zien. Opgeslagen op dit apparaat (localStorage).
         </p>
       </header>
 
@@ -73,7 +73,7 @@ export function PRDashboard() {
       >
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="space-y-1 text-xs font-semibold uppercase tracking-wide text-muted">
-            Atleet
+            Teamlid
             <select
               className="mt-1 w-full min-h-11 rounded-xl border border-edge bg-canvas px-3 text-sm text-ink"
               value={athlete}
@@ -84,7 +84,7 @@ export function PRDashboard() {
             </select>
           </label>
           <label className="space-y-1 text-xs font-semibold uppercase tracking-wide text-muted">
-            Station / test
+            Station
             <select
               className="mt-1 w-full min-h-11 rounded-xl border border-edge bg-canvas px-3 text-sm text-ink"
               value={stationId}

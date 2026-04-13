@@ -58,7 +58,7 @@ export function AthleteRingCard({
               onClick={() => setEditing(true)}
               title="Klik om naam te wijzigen"
             >
-              {name || `Atleet ${athleteIndex + 1}`}
+              {name || `Teamlid ${athleteIndex === 0 ? "A" : "B"}`}
             </button>
           )}
           <p className="mt-1 text-[11px] text-muted">

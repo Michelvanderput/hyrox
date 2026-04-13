@@ -16,6 +16,13 @@ export const RACE_CONFIG = {
     "Partners rennen samen, splitsen stations vrij. 3 min straf bij te ver uit elkaar lopen.",
 } as const;
 
+/** Home, countdown en metadata — één plek om editie-copy aan te passen. */
+export const EVENT_UI = {
+  headline: "HYROX Maastricht",
+  dateLineShort: "MECC · 17–20 sep 2026",
+  dateLineLong: "MECC Maastricht · 17–20 september 2026",
+} as const;
+
 export const HYROX_STATIONS = [
   {
     id: "ski",

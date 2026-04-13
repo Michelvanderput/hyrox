@@ -210,7 +210,7 @@ export function WorkoutVandaagClient() {
                   )}
                 </motion.button>
                 <span className="max-w-[100px] truncate text-center text-[10px] font-semibold text-muted">
-                  {names[ai] || `Atleet ${ai + 1}`}
+                  {names[ai] || `Teamlid ${ai === 0 ? "A" : "B"}`}
                 </span>
               </div>
             );

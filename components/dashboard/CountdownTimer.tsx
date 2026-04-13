@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 
+import { RACE_CONFIG, EVENT_UI } from "@/lib/constants";
 import { formatRaceCountdown } from "@/lib/utils";
 
-const RACE_AT = new Date("2026-09-20T08:00:00");
+const RACE_AT = new Date(`${RACE_CONFIG.date}T08:00:00`);
 
 export function CountdownTimer() {
   const [now, setNow] = useState(() => Date.now());
@@ -52,7 +53,7 @@ export function CountdownTimer() {
             </div>
           ))}
         </div>
-        <p className="mt-3 text-[11px] text-muted">MECC Maastricht · 17–20 september 2026</p>
+        <p className="mt-3 text-[11px] text-muted">{EVENT_UI.dateLineLong}</p>
       </div>
     </div>
   );

@@ -97,7 +97,7 @@ export async function getWorkspaceSnapshotAction(
 
     const members: TeamMemberSummary[] = typedMembers.map((m) => ({
       userId: m.user_id,
-      name: m.profiles?.name?.trim() || "Atleet",
+      name: m.profiles?.name?.trim() || "Deelnemer",
       motivationNote: m.motivation_note?.trim() || null,
     }));
 

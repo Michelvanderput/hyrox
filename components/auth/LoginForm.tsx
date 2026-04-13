@@ -123,7 +123,7 @@ export function LoginForm() {
             className="mt-1 w-full min-h-11 rounded-xl border border-edge bg-canvas px-3 text-sm"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="jij@voorbeeld.nl"
+            placeholder="jou@email.nl"
           />
         </label>
         <button

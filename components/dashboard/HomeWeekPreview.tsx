@@ -12,6 +12,7 @@ import { NeonProgressBar } from "@/components/ui/NeonProgressBar";
 
 export function HomeWeekPreview({ weekNumber }: { weekNumber: number }) {
   const completions = useTrackerStore((s) => s.completions);
+  const names = useTrackerStore((s) => s.athleteNames);
   const getWeekProgress = useTrackerStore((s) => s.getWeekProgress);
   const days = generateWeek(weekNumber);
 
@@ -61,7 +62,7 @@ export function HomeWeekPreview({ weekNumber }: { weekNumber: number }) {
                   className={`flex h-8 w-8 items-center justify-center rounded-lg border text-[11px] font-bold ${
                     a0 ? "border-cyan/50 bg-cyan/15 text-cyan" : "border-white/10 text-faint"
                   }`}
-                  title="Atleet 1"
+                  title={names[0]}
                 >
                   1
                 </span>
@@ -71,7 +72,7 @@ export function HomeWeekPreview({ weekNumber }: { weekNumber: number }) {
                       ? "border-neon-hot/50 bg-neon/10 text-neon-hot"
                       : "border-white/10 text-faint"
                   }`}
-                  title="Atleet 2"
+                  title={names[1]}
                 >
                   2
                 </span>

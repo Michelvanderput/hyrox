@@ -133,7 +133,7 @@ export function CompletionDrawer({
                         : "text-muted"
                     }`}
                   >
-                    {names[i] || `Atleet ${i + 1}`}
+                    {names[i] || `Teamlid ${i === 0 ? "A" : "B"}`}
                   </button>
                 );
               })}

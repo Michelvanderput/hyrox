@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { EVENT_UI } from "@/lib/constants";
 import { getCurrentWeekNumber } from "@/lib/training-plan";
 import { useTrackerStore } from "@/lib/store";
 
@@ -43,14 +44,14 @@ export function DashboardHome() {
           </div>
           <div className="min-w-0">
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
-              HYROX Maastricht
+              {EVENT_UI.headline}
             </p>
             <h1 className="font-heading text-xl font-black tracking-tight text-ink sm:text-2xl">
               <span className="bg-gradient-to-r from-cyan via-neon to-neon-hot bg-clip-text text-transparent">
                 Doubles training
               </span>
             </h1>
-            <p className="mt-0.5 text-[11px] text-faint">MECC · 17–20 sep 2026</p>
+            <p className="mt-0.5 text-[11px] text-faint">{EVENT_UI.dateLineShort}</p>
           </div>
         </div>
         <div className="shrink-0 text-right">

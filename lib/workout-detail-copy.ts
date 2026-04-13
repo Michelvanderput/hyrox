@@ -1,4 +1,5 @@
 import type { WorkoutType } from "@/types";
+import { RACE_CONFIG } from "@/lib/constants";
 
 export type WorkoutExtraBlock = {
   focus: string;
@@ -59,13 +60,13 @@ const BY_TYPE: Record<WorkoutType, WorkoutExtraBlock> = {
     ],
   },
   race: {
-    focus: "Simulatie / test",
+    focus: "Race-simulatie",
     tips: [
       "Eet en drink zoals op wedstrijddag (mini dry-run).",
       "Noteer splits per station — data = leerpunten.",
       "Plan 48–72 uur rust voor een echte race.",
     ],
-    hyroxNote: "Maastricht MECC: check bagage, heat-tijden en looplijnen in je hoofd.",
+    hyroxNote: `Op locatie (${RACE_CONFIG.location}): check bagage, heat-tijden en looplijnen vooraf.`,
   },
 };
 

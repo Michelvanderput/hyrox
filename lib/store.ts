@@ -76,7 +76,7 @@ const TOTAL_SLOTS = totalScheduledSlots();
 export const useTrackerStore = create<TrackerState>()(
   persist(
     (set, get) => ({
-      athleteNames: ["Atleet 1", "Atleet 2"],
+      athleteNames: ["Teamlid A", "Teamlid B"],
       completions: {},
       completionMeta: {},
       selectedWeek: 1,
@@ -90,8 +90,8 @@ export const useTrackerStore = create<TrackerState>()(
         const id0 = sorted[0]?.userId ?? null;
         const id1 = sorted[1]?.userId ?? null;
         const athleteNames: [string, string] = [
-          sorted[0]?.name?.trim() ? sorted[0].name.trim() : "Atleet 1",
-          sorted[1]?.name?.trim() ? sorted[1].name.trim() : "Partner",
+          sorted[0]?.name?.trim() ? sorted[0].name.trim() : "Teamlid A",
+          sorted[1]?.name?.trim() ? sorted[1].name.trim() : "Teamlid B",
         ];
         const memberMotivations: [string | null, string | null] = [
           sorted[0]?.motivationNote?.trim() ? sorted[0].motivationNote.trim() : null,
