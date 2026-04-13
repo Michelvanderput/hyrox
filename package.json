@@ -1,18 +1,32 @@
 {
   "name": "hyrox",
+  "version": "0.1.0",
   "private": true,
-  "description": "Monorepo root; Next.js app in hyrox-tracker/.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
   "dependencies": {
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.103.0",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^0.544.0",
     "next": "16.2.3",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "recharts": "^3.8.1",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
-    "eslint-config-next": "16.2.3"
-  },
-  "scripts": {
-    "build": "npm install --no-audit --no-fund --prefix hyrox-tracker && npm run build --prefix hyrox-tracker",
-    "dev": "npm run dev --prefix hyrox-tracker",
-    "lint": "npm run lint --prefix hyrox-tracker"
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.3",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }
