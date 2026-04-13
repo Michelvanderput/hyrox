@@ -45,6 +45,7 @@ export interface Database {
           race_location: string | null;
           division: string | null;
           invite_code: string;
+          created_by: string | null;
           created_at: string;
         };
         Insert: {
@@ -54,6 +55,7 @@ export interface Database {
           race_location?: string | null;
           division?: string | null;
           invite_code?: string;
+          created_by?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["teams"]["Insert"]>;
