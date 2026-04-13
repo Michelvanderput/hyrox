@@ -80,11 +80,6 @@ export function InviteJoinPanel({
 
   return (
     <div className="space-y-4">
-      <p className="rounded-xl border border-edge bg-canvas px-3 py-2 text-xs text-muted">
-        Je wordt lid van hetzelfde <span className="font-semibold text-ink">cloud-team</span> als
-        degene die de code heeft aangemaakt. Daarna kun je samen het plan afvinken (iedereen alleen
-        de eigen kolom).
-      </p>
       <dl className="grid gap-2 rounded-2xl border border-edge bg-canvas p-4 text-sm">
         <div className="flex justify-between gap-3">
           <dt className="text-muted">Team</dt>
@@ -114,21 +109,6 @@ export function InviteJoinPanel({
       </button>
 
       {msg && <p className="text-sm text-muted">{msg}</p>}
-
-      <div className="flex flex-wrap gap-2">
-        <Link
-          href="/login"
-          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-edge-hover bg-canvas px-3 text-xs font-semibold hover:border-gold/40"
-        >
-          Login
-        </Link>
-        <Link
-          href="/profile"
-          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-edge-hover bg-canvas px-3 text-xs font-semibold hover:border-gold/40"
-        >
-          Profiel
-        </Link>
-      </div>
     </div>
   );
 }

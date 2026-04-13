@@ -2,9 +2,11 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 import type { Database } from "@/types/database";
+import { safeInternalPath } from "@/lib/safe-next-path";
 
 /**
  * Ververs auth-cookies op elke request (Supabase + Next.js App Router aanbevolen patroon).
+ * Zonder login: alleen publieke routes; anders redirect naar /login.
  */
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -32,7 +34,32 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { pathname } = request.nextUrl;
+
+  const isPublicRoute =
+    pathname === "/login" ||
+    pathname.startsWith("/auth/") ||
+    pathname.startsWith("/invite/") ||
+    pathname === "/offline";
+
+  if (!user && !isPublicRoute) {
+    const loginUrl = new URL("/login", request.url);
+    const dest = `${pathname}${request.nextUrl.search}`;
+    if (dest !== "/" && dest !== "") {
+      loginUrl.searchParams.set("next", dest);
+    }
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if (user && pathname === "/login") {
+    const next = safeInternalPath(request.nextUrl.searchParams.get("next"));
+    return NextResponse.redirect(new URL(next, request.url));
+  }
+
   return supabaseResponse;
 }
 

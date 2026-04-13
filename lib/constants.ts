@@ -138,7 +138,8 @@ export const PHASES: readonly PhaseInfo[] = [
   },
 ] as const;
 
-export const PR_STATION_IDS = [
+/** Race / cardio — waarde in seconden. */
+export const PR_STATION_IDS_HYROX = [
   "ski",
   "row",
   "wallballs",
@@ -147,13 +148,61 @@ export const PR_STATION_IDS = [
   "run_5km",
 ] as const;
 
+/** Bekende gym-lifts — waarde in kg (1RM of zwaarste nette set). */
+export const PR_STATION_IDS_GYM = [
+  "gym_bench",
+  "gym_squat",
+  "gym_front_squat",
+  "gym_deadlift",
+  "gym_trap_bar",
+  "gym_ohp",
+  "gym_rd",
+  "gym_farmers_heavy",
+] as const;
+
+export const PR_STATION_IDS = [
+  ...PR_STATION_IDS_HYROX,
+  ...PR_STATION_IDS_GYM,
+] as const;
+
 export type PRStationId = (typeof PR_STATION_IDS)[number];
 
+export type PRValueUnit = "sec" | "kg";
+
 export const PR_STATION_LABELS: Record<PRStationId, string> = {
-  ski: "SkiErg 1000m (sec)",
-  row: "Row 1000m (sec)",
-  wallballs: "Wall Balls 100 (sec)",
-  sled_push: "Sled Push 50m (sec)",
-  run_1km: "Run 1 km (sec)",
-  run_5km: "Run 5 km (sec)",
+  ski: "SkiErg 1000m",
+  row: "Row 1000m",
+  wallballs: "Wall Balls 100",
+  sled_push: "Sled Push 50m",
+  run_1km: "Run 1 km",
+  run_5km: "Run 5 km",
+  gym_bench: "Bankdrukken (1RM / zwaarste set)",
+  gym_squat: "Back squat",
+  gym_front_squat: "Front squat",
+  gym_deadlift: "Conventional deadlift",
+  gym_trap_bar: "Trap bar deadlift",
+  gym_ohp: "Overhead press (staand)",
+  gym_rd: "Romanian deadlift",
+  gym_farmers_heavy: "Farmers carry (zwaarste KB’s per hand)",
 };
+
+export const PR_STATION_UNITS: Record<PRStationId, PRValueUnit> = {
+  ski: "sec",
+  row: "sec",
+  wallballs: "sec",
+  sled_push: "sec",
+  run_1km: "sec",
+  run_5km: "sec",
+  gym_bench: "kg",
+  gym_squat: "kg",
+  gym_front_squat: "kg",
+  gym_deadlift: "kg",
+  gym_trap_bar: "kg",
+  gym_ohp: "kg",
+  gym_rd: "kg",
+  gym_farmers_heavy: "kg",
+};
+
+export function isPrStationId(id: string): id is PRStationId {
+  return (PR_STATION_IDS as readonly string[]).includes(id);
+}

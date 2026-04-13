@@ -10,7 +10,14 @@ import { WORKOUT_TYPE_META } from "@/lib/workout-styles";
 
 import { NeonProgressBar } from "@/components/ui/NeonProgressBar";
 
-export function HomeWeekPreview({ weekNumber }: { weekNumber: number }) {
+export function HomeWeekPreview({
+  weekNumber,
+  compact = false,
+}: {
+  weekNumber: number;
+  /** Minder randtekst (bijv. op home naast andere voortgang). */
+  compact?: boolean;
+}) {
   const completions = useTrackerStore((s) => s.completions);
   const names = useTrackerStore((s) => s.athleteNames);
   const getWeekProgress = useTrackerStore((s) => s.getWeekProgress);
@@ -31,7 +38,7 @@ export function HomeWeekPreview({ weekNumber }: { weekNumber: number }) {
           <p className="mt-0.5 text-[11px] text-muted">Dag-voor-dag · week {weekNumber}</p>
         </div>
         <Link
-          href="/plan"
+          href={`/plan?week=${weekNumber}`}
           className="hyrox-btn-ghost inline-flex min-h-10 shrink-0 items-center rounded-full px-4 text-xs font-semibold"
         >
           Open plan
@@ -39,8 +46,15 @@ export function HomeWeekPreview({ weekNumber }: { weekNumber: number }) {
       </div>
       <div className="mt-3">
         <NeonProgressBar value={weekPct} />
-        <p className="mt-1.5 text-[10px] text-faint">Beide atleten samen · {weekPct}% van deze week</p>
+        {!compact && (
+          <p className="mt-1.5 text-[10px] text-faint">Samen · {weekPct}%</p>
+        )}
       </div>
+      <p className="mt-2 text-[10px] leading-snug text-faint">
+        Iets vergeten? Open het weekplan (knop hierboven) en gebruik{" "}
+        <span className="font-semibold text-muted">← Vorige</span> om eerdere weken alsnog af te
+        vinken.
+      </p>
       <ul className="mt-4 space-y-2">
         {dayOrder.map((origDi) => {
           const d = days[origDi]!;
@@ -84,9 +98,11 @@ export function HomeWeekPreview({ weekNumber }: { weekNumber: number }) {
           );
         })}
       </ul>
-      <p className="mt-3 text-center text-[10px] text-faint">
-        Weekplan 1–{TOTAL_WEEKS} · vink af om voortgang te zien
-      </p>
+      {!compact && (
+        <p className="mt-3 text-center text-[10px] text-faint">
+          Week {weekNumber} van {TOTAL_WEEKS}
+        </p>
+      )}
     </section>
   );
 }

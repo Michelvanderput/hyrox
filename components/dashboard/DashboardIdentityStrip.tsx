@@ -48,7 +48,7 @@ export function DashboardIdentityStrip() {
               {partnerName}
             </>
           ) : (
-            <span className="text-muted"> · nodig je partner via Profiel → teamlink</span>
+            <span className="text-muted"> · geen tweede lid</span>
           )}
         </p>
       </div>

@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import Link from "next/link";
 
 import { LoginForm } from "@/components/auth/LoginForm";
 
@@ -15,11 +14,6 @@ export default function LoginPage() {
       >
         <LoginForm />
       </Suspense>
-      <p className="mx-auto mt-6 max-w-md text-center text-[11px] text-faint">
-        <Link href="/" className="underline decoration-edge-hover underline-offset-4">
-          Terug naar home
-        </Link>
-      </p>
     </div>
   );
 }

@@ -80,19 +80,21 @@ export function PlanClient({
           </span>
         </h1>
         <p className="mt-1 text-sm text-muted">
-          Swipe links/rechts om van week te wisselen · {phase.label}
+          {phase.label} · swipe om week te wisselen ·{" "}
+          <span className="text-faint">↔ = dagen ruilen</span>
         </p>
-        {swapPickVisual !== null ? (
+        {swapPickVisual !== null && (
           <p className="mt-2 rounded-xl border border-gold/35 bg-gold/10 px-3 py-2 text-xs text-ink">
-            Tik op <span className="font-semibold">↔</span> bij een andere dag om de volgorde te
-            ruilen, of opnieuw op dezelfde knop om te annuleren.
-          </p>
-        ) : (
-          <p className="mt-2 text-[11px] text-faint">
-            Tip: <span className="font-semibold text-muted">↔</span> op een dag om trainingen in
-            deze week te herschikken (alleen volgorde in de lijst; je vinkt nog steeds per dag af).
+            Tik <span className="font-semibold">↔</span> op een andere dag om te ruilen, of nogmaals
+            op dezelfde om te annuleren.
           </p>
         )}
+        <p className="mt-3 rounded-xl border border-edge bg-canvas px-3 py-2.5 text-xs leading-relaxed text-muted">
+          <span className="font-semibold text-ink">Terugwerkend afvinken:</span> met{" "}
+          <span className="font-semibold text-ink">← Vorige</span> ga je naar eerdere trainingsweken
+          en kun je alsnog vinkjes zetten of intrekken — ook voor dagen die je bent vergeten. Met team
+          syncen we alleen jouw eigen slot naar de cloud.
+        </p>
       </header>
 
       <PhaseBanner weekNumber={selectedWeek} />
@@ -136,7 +138,7 @@ export function PlanClient({
 
       <div>
         <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
-          Weekkiezer (1–{TOTAL_WEEKS})
+          Week 1–{TOTAL_WEEKS}
         </div>
         <WeekSelector
           currentCalendarWeek={cw}

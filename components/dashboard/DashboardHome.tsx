@@ -77,7 +77,6 @@ export function DashboardHome() {
           >
             {avgTotal}%
           </p>
-          <p className="mt-1 text-[10px] text-faint">Deze week · {weekPct}%</p>
         </div>
       </header>
 
@@ -96,7 +95,7 @@ export function DashboardHome() {
           <p className="mt-0.5 font-heading text-base font-bold text-ink group-hover:text-neon-hot">
             Workout van de dag
           </p>
-          <p className="mt-1 text-[11px] text-muted">Schema, tips en snel afvinken</p>
+          <p className="mt-1 text-[11px] text-muted">Open voor details en afvinken</p>
         </div>
         <span className="text-xl text-neon-hot transition group-hover:translate-x-0.5" aria-hidden>
           →
@@ -116,7 +115,7 @@ export function DashboardHome() {
 
       <PhaseBanner weekNumber={week} />
 
-      <HomeWeekPreview weekNumber={week} />
+      <HomeWeekPreview weekNumber={week} compact />
 
       <div className="flex flex-wrap gap-2">
         <Link href="/plan" className="hyrox-btn-primary inline-flex min-h-11 flex-1 items-center justify-center px-5 text-sm sm:flex-none">

@@ -59,14 +59,9 @@ export function ProfileDashboard() {
           </span>
         </h1>
         <p className="mt-1 text-sm text-muted">
-          Huidige kalenderweek: <span className="text-ink">{cw}</span> · basisdata in localStorage;
-          met ingelogd team worden afvinken + Realtime sync naar Supabase gestuurd.
+          Kalenderweek <span className="text-ink">{cw}</span>
+          {cloudTeamId ? " · team sync actief" : ""}.
         </p>
-        {cloudUserId && cloudTeamId && (
-          <p className="mt-2 text-[11px] font-medium text-success">
-            ● Live sync actief — wijzigingen in het plan verschijnen bij je partner zonder refresh.
-          </p>
-        )}
       </header>
 
       <UserSessionCard />
@@ -75,18 +70,13 @@ export function ProfileDashboard() {
 
       {cloudUserId && (
         <section className="rounded-2xl border border-edge bg-panel p-4 sm:p-5">
-          <h2 className="font-heading text-sm font-bold">Jouw gegevens</h2>
-          <p className="mt-1 text-sm text-muted">
-            Dit is <span className="font-semibold text-ink">jouw</span> profiel in de app (naam +
-            niveau). Na opslaan zie je het direct op het dashboard en in het team.
-          </p>
           <ProfileBasicsEditor />
-          <p className="mt-4 text-[11px] text-faint">
-            Eerste keer instellen?{" "}
-            <Link href="/onboarding" className="text-muted underline underline-offset-2">
-              Volledige onboarding
-            </Link>
-          </p>
+          <Link
+            href="/onboarding"
+            className="mt-3 inline-block text-[11px] text-faint underline underline-offset-2 hover:text-muted"
+          >
+            Wizard (eerste keer)
+          </Link>
         </section>
       )}
 

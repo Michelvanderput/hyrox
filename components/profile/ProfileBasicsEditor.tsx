@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 import { getMyProfileAction, updateMyProfileBasicsAction } from "@/app/actions/profile";
 import {
@@ -10,8 +10,16 @@ import {
 } from "@/lib/profile-basics";
 import { appToast } from "@/lib/toast-store";
 
+type BasicsSnapshot = {
+  name: string;
+  gender: "male" | "female" | "other" | "";
+  level: "beginner" | "intermediate" | "advanced" | "";
+};
+
 export function ProfileBasicsEditor() {
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(false);
+  const editSnapshot = useRef<BasicsSnapshot | null>(null);
   const [name, setName] = useState("");
   const [gender, setGender] = useState<"male" | "female" | "other" | "">("");
   const [level, setLevel] = useState<"beginner" | "intermediate" | "advanced" | "">("");
@@ -24,15 +32,19 @@ export function ProfileBasicsEditor() {
       if (cancelled) return;
       if (res.ok && res.data.profile) {
         const p = res.data.profile;
-        setName(p.name?.trim() || "");
-        setGender(p.gender === "male" || p.gender === "female" || p.gender === "other" ? p.gender : "");
-        setLevel(
+        const n = p.name?.trim() || "";
+        const g =
+          p.gender === "male" || p.gender === "female" || p.gender === "other" ? p.gender : "";
+        const lv =
           p.fitness_level === "beginner" ||
-            p.fitness_level === "intermediate" ||
-            p.fitness_level === "advanced"
+          p.fitness_level === "intermediate" ||
+          p.fitness_level === "advanced"
             ? p.fitness_level
-            : "",
-        );
+            : "";
+        setName(n);
+        setGender(g);
+        setLevel(lv);
+        if (!g || !lv) setEditing(true);
       }
       setLoading(false);
     })();
@@ -60,9 +72,30 @@ export function ProfileBasicsEditor() {
         return;
       }
       appToast.success("Profiel bijgewerkt.");
+      setEditing(false);
+      editSnapshot.current = null;
       window.dispatchEvent(new Event("hyrox-workspace-refresh"));
     });
   };
+
+  const startEdit = () => {
+    editSnapshot.current = { name, gender, level };
+    setEditing(true);
+  };
+
+  const cancelEdit = () => {
+    const s = editSnapshot.current;
+    if (s) {
+      setName(s.name);
+      setGender(s.gender);
+      setLevel(s.level);
+    }
+    editSnapshot.current = null;
+    setEditing(false);
+  };
+
+  const genderLabel = gender ? PROFILE_GENDERS.find((g) => g.id === gender)?.label : null;
+  const levelLabel = level ? PROFILE_LEVELS.find((l) => l.id === level)?.label : null;
 
   if (loading) {
     return (
@@ -75,8 +108,50 @@ export function ProfileBasicsEditor() {
     );
   }
 
+  if (!editing) {
+    return (
+      <div className="mt-1">
+        <div className="flex items-start justify-between gap-3">
+          <h2 className="font-heading text-sm font-bold">Jouw gegevens</h2>
+          <button
+            type="button"
+            onClick={startEdit}
+            className="shrink-0 rounded-xl border border-edge-hover bg-canvas px-3 py-2 text-xs font-semibold text-ink hover:border-gold/40"
+          >
+            Bewerken
+          </button>
+        </div>
+        <dl className="mt-4 grid gap-3 text-sm">
+          <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+            <dt className="text-xs font-semibold uppercase tracking-wide text-muted">Naam</dt>
+            <dd className="font-medium text-ink">{name.trim() ? name : "—"}</dd>
+          </div>
+          <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+            <dt className="text-xs font-semibold uppercase tracking-wide text-muted">Geslacht</dt>
+            <dd className="text-ink">{genderLabel ?? "—"}</dd>
+          </div>
+          <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+            <dt className="text-xs font-semibold uppercase tracking-wide text-muted">Niveau</dt>
+            <dd className="text-ink">{levelLabel ?? "—"}</dd>
+          </div>
+        </dl>
+      </div>
+    );
+  }
+
   return (
-    <form onSubmit={onSubmit} className="mt-3 space-y-4">
+    <div className="mt-1">
+      <div className="flex items-start justify-between gap-3">
+        <h2 className="font-heading text-sm font-bold">Jouw gegevens</h2>
+        <button
+          type="button"
+          onClick={cancelEdit}
+          className="shrink-0 text-xs font-semibold text-muted underline-offset-2 hover:text-ink hover:underline"
+        >
+          Annuleren
+        </button>
+      </div>
+      <form onSubmit={onSubmit} className="mt-4 space-y-4">
       <label className="block space-y-1 text-xs font-semibold uppercase tracking-wide text-muted">
         Weergavenaam
         <input
@@ -148,5 +223,6 @@ export function ProfileBasicsEditor() {
         {pending ? "Opslaan…" : "Gegevens opslaan"}
       </button>
     </form>
+    </div>
   );
 }

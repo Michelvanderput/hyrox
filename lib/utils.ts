@@ -23,6 +23,14 @@ export function formatSeconds(sec: number): string {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
+/** Toon kg met NL-decimaal (max 1 decimaal als het geen geheel is). */
+export function formatKg(kg: number): string {
+  if (!Number.isFinite(kg) || kg <= 0) return "—";
+  const rounded = Math.round(kg * 10) / 10;
+  const s = Number.isInteger(rounded) ? String(rounded) : String(rounded).replace(".", ",");
+  return `${s} kg`;
+}
+
 export function formatRaceCountdown(ms: number): {
   d: number;
   h: number;

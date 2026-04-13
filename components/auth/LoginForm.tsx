@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { safeInternalPath } from "@/lib/safe-next-path";
 
 export function LoginForm() {
   const searchParams = useSearchParams();
@@ -18,6 +19,7 @@ export function LoginForm() {
   const [msg, setMsg] = useState<string | null>(null);
 
   const err = searchParams.get("error");
+  const afterLoginPath = safeInternalPath(searchParams.get("next"));
 
   if (!configured || !supabase) {
     return (
@@ -59,7 +61,7 @@ export function LoginForm() {
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
       options: {
-        emailRedirectTo: `${origin}/auth/callback?next=/`,
+        emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(afterLoginPath)}`,
       },
     });
     setBusy(null);
@@ -91,19 +93,15 @@ export function LoginForm() {
       setMsg(error.message);
       return;
     }
-    window.location.assign("/");
+    window.location.assign(afterLoginPath);
   };
 
   return (
     <div className="mx-auto max-w-md space-y-4 rounded-3xl border border-edge bg-panel p-6">
       <h1 className="font-heading text-2xl font-black">Login</h1>
       <p className="text-sm text-muted">
-        <span className="font-semibold text-ink/90">Eerste keer:</span> vraag een magic link.{" "}
-        <span className="font-semibold text-ink/90">Daarna:</span> onder{" "}
-        <span className="font-semibold text-ink/90">Profiel & team</span> stel je een wachtwoord in
-        en start je je duo-team (invite-link). Je partner opent bijvoorbeeld{" "}
-        <code className="rounded bg-canvas px-1 py-0.5 text-xs text-gold">/invite/teamcode</code>{" "}
-        (met jullie echte code).
+        Magic link om te starten; wachtwoord en teamlink zet je daarna onder{" "}
+        <span className="font-semibold text-ink/90">Profiel</span>.
       </p>
 
       {err && (
@@ -162,13 +160,6 @@ export function LoginForm() {
       </div>
 
       {msg && <p className="text-sm text-muted">{msg}</p>}
-
-      <Link
-        href="/"
-        className="inline-flex min-h-11 items-center justify-center rounded-xl border border-edge-hover bg-canvas px-4 text-sm font-semibold hover:border-gold/40"
-      >
-        ← Terug naar dashboard
-      </Link>
     </div>
   );
 }

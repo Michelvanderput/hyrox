@@ -111,6 +111,17 @@ export function WorkoutVandaagClient() {
         <p className="text-sm text-muted">
           Week {weekNumber} · {phaseLabel} · {workout.dayLabel}
         </p>
+        <p className="mt-2 rounded-xl border border-edge bg-canvas px-3 py-2 text-xs leading-relaxed text-muted">
+          Gemist of vergeten af te vinken? Open het{" "}
+          <Link
+            href={`/plan?week=${weekNumber}`}
+            className="font-semibold text-gold underline underline-offset-2 hover:text-gold/90"
+          >
+            weekplan
+          </Link>{" "}
+          en tik op <span className="font-semibold text-ink">← Vorige</span> voor eerdere weken — je
+          mag met terugwerkende kracht alsnog vinkjes zetten of verwijderen.
+        </p>
       </header>
 
       <article className={`hyrox-card relative overflow-hidden p-4 sm:p-5 ${style.border} ${style.bg}`}>
@@ -166,15 +177,11 @@ export function WorkoutVandaagClient() {
 
       <section className="hyrox-card space-y-3 p-4 sm:p-5">
         <div className="flex items-center justify-between gap-2">
-          <h3 className="font-heading text-sm font-bold text-ink">Deze week (samenvatting)</h3>
-          <span className="text-xs font-semibold tabular-nums text-muted">{weekPct}%</span>
+          <h3 className="font-heading text-sm font-bold text-ink">Vandaag afvinken</h3>
+          <span className="text-xs font-semibold tabular-nums text-muted">{weekPct}% deze week</span>
         </div>
         <NeonProgressBar value={weekPct} />
-      </section>
-
-      <section className="hyrox-card p-4 sm:p-5">
-        <h3 className="font-heading text-sm font-bold text-ink">Vandaag afvinken</h3>
-        <p className="mt-1 text-[11px] text-muted">Zelfde data als in het weekplan. In de cloud alleen je eigen slot.</p>
+        <p className="text-[11px] text-muted">Zelfde als weekplan; in de cloud alleen je eigen slot.</p>
         <div className="mt-4 flex gap-3">
           {([0, 1] as const).map((ai) => {
             const on = !!completions[completionKey(ai, weekNumber, dayIndex)];

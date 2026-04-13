@@ -74,3 +74,40 @@ export async function joinTeamByCodeAction(
     return { ok: false, error: msg };
   }
 }
+
+export async function updateTeamNameAction(
+  teamId: string,
+  name: string,
+): Promise<ActionResult<{ name: string }>> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return { ok: false, error: "Je bent niet ingelogd." };
+
+    const trimmed = name.trim();
+    if (!trimmed) return { ok: false, error: "Vul een teamnaam in." };
+
+    const { data: membership, error: memErr } = await supabase
+      .from("team_members")
+      .select("team_id")
+      .eq("team_id", teamId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (memErr) return { ok: false, error: memErr.message };
+    if (!membership) return { ok: false, error: "Je zit niet in dit team." };
+
+    const { error } = await supabase.from("teams").update({ name: trimmed }).eq("id", teamId);
+
+    if (error) return { ok: false, error: error.message };
+
+    revalidatePath("/");
+    revalidatePath("/profile");
+    return { ok: true, data: { name: trimmed } };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Onbekende fout.";
+    return { ok: false, error: msg };
+  }
+}

@@ -294,6 +294,19 @@ export const useTrackerStore = create<TrackerState>()(
       resetProgress: () => set({ completions: {}, completionMeta: {} }),
 
       addPr: (entry) => {
+        const s0 = get();
+        if (
+          s0.viewerUserId &&
+          s0.activeTeamId &&
+          !canEditAthleteSlot(
+            s0.viewerUserId,
+            s0.activeTeamId,
+            s0.memberUserIds,
+            entry.athleteIndex,
+          )
+        ) {
+          return;
+        }
         const id =
           typeof crypto !== "undefined" && "randomUUID" in crypto
             ? crypto.randomUUID()
@@ -310,7 +323,18 @@ export const useTrackerStore = create<TrackerState>()(
       },
 
       removePr: (id) =>
-        set((s) => ({ prEntries: s.prEntries.filter((e) => e.id !== id) })),
+        set((s) => {
+          const e = s.prEntries.find((x) => x.id === id);
+          if (
+            e &&
+            s.viewerUserId &&
+            s.activeTeamId &&
+            !canEditAthleteSlot(s.viewerUserId, s.activeTeamId, s.memberUserIds, e.athleteIndex)
+          ) {
+            return {};
+          }
+          return { prEntries: s.prEntries.filter((x) => x.id !== id) };
+        }),
 
       importSnapshot: (data) => {
         if (!data || typeof data !== "object") return;

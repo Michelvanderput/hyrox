@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import type { Database } from "@/types/database";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { safeInternalPath } from "@/lib/safe-next-path";
 
 /**
  * PKCE / OAuth callback: sessiecookies moeten op **deze** response staan,
@@ -11,8 +12,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/env";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  const nextParam = url.searchParams.get("next") ?? "/";
-  const next = nextParam.startsWith("/") ? nextParam : `/${nextParam}`;
+  const next = safeInternalPath(url.searchParams.get("next"));
 
   if (!code) {
     return NextResponse.redirect(new URL("/login?error=missing_code", url.origin));
