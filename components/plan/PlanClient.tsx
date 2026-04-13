@@ -4,7 +4,12 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useReducedMotion, PanInfo } from "framer-motion";
 
 import { TOTAL_WEEKS } from "@/lib/constants";
-import { getPhaseForWeek, generateWeek, getCurrentWeekNumber } from "@/lib/training-plan";
+import {
+  formatWeekDateRangeNl,
+  generateWeek,
+  getCurrentWeekNumber,
+  getPhaseForWeek,
+} from "@/lib/training-plan";
 import { useTrackerStore } from "@/lib/store";
 
 import { PhaseBanner } from "@/components/dashboard/PhaseBanner";
@@ -99,10 +104,16 @@ export function PlanClient({
 
       <PhaseBanner weekNumber={selectedWeek} />
 
+      <p className="text-[13px] text-muted">
+        <span className="font-semibold text-ink">Week {selectedWeek}</span>
+        <span className="text-faint"> · </span>
+        {formatWeekDateRangeNl(selectedWeek, days.length)}
+      </p>
+
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
-          className="hyrox-btn-primary min-h-11 rounded-full px-4 text-xs"
+          className="hyrox-btn-primary min-h-11 rounded-full px-4 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
           onClick={() => {
             clearSwapPick();
             setSelectedWeek(cw);
@@ -112,7 +123,7 @@ export function PlanClient({
         </button>
         <button
           type="button"
-          className="hyrox-btn-ghost min-h-11 rounded-full px-4 text-xs font-semibold text-muted hover:text-ink disabled:opacity-35"
+          className="hyrox-btn-ghost min-h-11 rounded-full px-4 text-xs font-semibold text-muted hover:text-ink disabled:opacity-35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
           onClick={() => go(-1)}
           disabled={selectedWeek <= 1}
         >
@@ -120,7 +131,7 @@ export function PlanClient({
         </button>
         <button
           type="button"
-          className="hyrox-btn-ghost min-h-11 rounded-full px-4 text-xs font-semibold text-muted hover:text-ink disabled:opacity-35"
+          className="hyrox-btn-ghost min-h-11 rounded-full px-4 text-xs font-semibold text-muted hover:text-ink disabled:opacity-35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
           onClick={() => go(1)}
           disabled={selectedWeek >= TOTAL_WEEKS}
         >
@@ -128,7 +139,7 @@ export function PlanClient({
         </button>
         <button
           type="button"
-          className="hyrox-btn-ghost min-h-11 rounded-full px-4 text-xs font-semibold text-muted hover:text-ink"
+          className="hyrox-btn-ghost min-h-11 rounded-full px-4 text-xs font-semibold text-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
           onClick={() => resetWeekDayOrder(selectedWeek)}
           title="Weekvolgorde terug naar schema"
         >

@@ -3,7 +3,8 @@ import type { PhaseInfo } from "@/types";
 /** Nieuw schema: 22 weken → HYROX race-weekend (startdatum zie TRAINING_START_ISO). */
 export const TOTAL_WEEKS = 22;
 
-export const TRAINING_START_ISO = "2026-04-14T06:00:00";
+/** Eerste dag van week 1 = maandag (schema Ma → Zo). */
+export const TRAINING_START_ISO = "2026-04-13T06:00:00";
 
 export const RACE_CONFIG = {
   date: "2026-09-20",

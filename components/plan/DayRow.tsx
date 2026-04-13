@@ -6,6 +6,7 @@ import { ArrowLeftRight } from "lucide-react";
 
 import type { DayWorkout } from "@/types";
 import { canEditAthleteSlot } from "@/lib/athlete-ui";
+import { formatScheduledDayNl } from "@/lib/training-plan";
 import { completionKey } from "@/lib/utils";
 import { useTrackerStore } from "@/lib/store";
 import { WORKOUT_TYPE_META } from "@/lib/workout-styles";
@@ -142,10 +143,13 @@ export function DayRow({
         <ConfettiBurst active={burst} />
         <button
           type="button"
-          className="flex flex-col items-center justify-center text-center"
+          className="flex flex-col items-center justify-center gap-0.5 text-center"
           onClick={() => setDrawer(true)}
         >
           <span className={`font-heading text-sm font-bold ${style.text}`}>{workout.dayLabel}</span>
+          <span className="max-w-[56px] truncate text-[9px] font-medium capitalize text-muted">
+            {formatScheduledDayNl(weekNumber, dayIndex)}
+          </span>
           <span className="text-[9px] text-faint">{style.label}</span>
         </button>
         <button

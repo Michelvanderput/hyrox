@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 import type { DayWorkout } from "@/types";
+import { formatScheduledDayNl } from "@/lib/training-plan";
 import { canEditAthleteSlot, resolveMyAthleteIndex } from "@/lib/athlete-ui";
 import { completionKey } from "@/lib/utils";
 import { useTrackerStore } from "@/lib/store";
@@ -84,7 +85,11 @@ export function CompletionDrawer({
               Workout log
             </h2>
             <p className="mt-1 text-sm text-muted">
-              {workout.dayLabel} · week {weekNumber} — {workout.title}
+              {workout.dayLabel}{" "}
+              <span className="text-faint">·</span> {formatScheduledDayNl(weekNumber, dayIndex)}{" "}
+              <span className="text-faint">·</span> week {weekNumber}
+              <span className="text-faint"> — </span>
+              {workout.title}
             </p>
 
             <div className="mt-3 max-h-[38vh] space-y-2 overflow-y-auto rounded-xl border border-white/10 bg-canvas/90 p-3 text-left">

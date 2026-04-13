@@ -1,6 +1,10 @@
 import type { DayWorkout, WorkoutType } from "@/types";
 
 import { TOTAL_WEEKS } from "@/lib/constants";
+import {
+  appendWorkoutEquipmentNote,
+  type WorkoutAltKey,
+} from "@/lib/workout-equipment-alternatives";
 
 function day(
   dayLabel: string,
@@ -9,9 +13,15 @@ function day(
   description: string,
   durationLabel: string,
   detail?: string,
+  equipmentAlt?: WorkoutAltKey,
 ): DayWorkout {
   const base: DayWorkout = { dayLabel, title, type, description, durationLabel };
-  if (detail) base.detail = detail;
+  if (detail) {
+    base.detail =
+      equipmentAlt !== undefined
+        ? appendWorkoutEquipmentNote(detail, equipmentAlt)
+        : detail;
+  }
   return base;
 }
 
@@ -117,6 +127,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Plank-varianten en anti-rotatie.",
       "28 min",
       "3 rondes:\n• Plank 45 s\n• Side plank dips 8/side\n• Pallof press 12/side (licht elastiek of kabel)\n• Dead bug 10/side",
+      "gym_band_cable",
     ),
     day(
       "Za",
@@ -253,6 +264,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Kennismaking met 2–3 klassieke bewegingen.",
       "40–50 min",
       "Kies 2–3 stations (bijv. SkiErg 3 × 250 m rustig, Row 3 × 250 m, Wall ball 3 × 10 met lichte bal).\n\nDoel: vorm en ademhaling — geen maximale inspanning. Wissel met partner af als duo.\n\nSluit af met 5 min mobiliteit.",
+      "pick_stations_intro",
     ),
     day("Zo", "Rust", "rest", "—", "—", undefined),
   ],
@@ -283,6 +295,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Korte techniekblokken.",
       "30 min",
       "SkiErg 2 × 3 min techniek\n• Row 2 × 3 min techniek\n\nAlleen vorm — geen test.",
+      "ergs_pair",
     ),
     day(
       "Za",
@@ -403,6 +416,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Vaste groepsles — techniek & format.",
       "55–65 min",
       "Volg de instructeur. Focus: transities tussen bewegingen, ademhaling, partnercommunicatie.\n\nNeem notities welke stations zwaar aanvoelen — dat wordt input voor zaterdag.",
+      "hyrox_class",
     ),
     day(
       "Vr",
@@ -411,6 +425,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Ondersteuning voor wall balls / sled.",
       "32 min",
       "Landmine press 3 × 10\n• Face pull 3 × 15\n• Pallof 3 × 10/side\n• Dead hang 3 × 20–30 s",
+      "gym_band_cable",
     ),
     day(
       "Za",
@@ -441,6 +456,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Vaste les — bouw consistentie.",
       "55–65 min",
       "Zelfde intentie als week 9: techniek > ego. Vraag feedback op wall ball depth.",
+      "hyrox_class",
     ),
     day(
       "Vr",
@@ -479,6 +495,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Techniek onder vermoeidheid oefenen.",
       "55–65 min",
       "Let op adem in wall balls en row — dat bepaalt je latere run-legs.",
+      "hyrox_class",
     ),
     day(
       "Vr",
@@ -487,6 +504,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Rugsterkte voor sled pull / row.",
       "35 min",
       "Ring row of cable row 4 × 10\n• RDL licht 3 × 10\n• Plank drag 3 × 8",
+      "gym_band_cable",
     ),
     day(
       "Za",
@@ -517,6 +535,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Vaste les.",
       "55–65 min",
       "Mentale note: welke station voelt als ‘jouw’ zwakte? Train die 1× extra in open gym als kan.",
+      "hyrox_class",
     ),
     day(
       "Vr",
@@ -525,6 +544,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Techniek sled push/pull zonder vermoeidheid.",
       "30 min",
       "Alleen als faciliteit open is — anders hip thrust + plank.\n\nSled: lage romp, korte passes — blijf rustig uitademen (niet je adem blokkeren).",
+      "sled_only",
     ),
     day(
       "Za",
@@ -555,6 +575,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Vaste les.",
       "55–65 min",
       "Vraag expliciet om feedback op transities (run → station mindset).",
+      "hyrox_class",
     ),
     day(
       "Vr",
@@ -563,6 +584,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "2 stations diep — geen metcon.",
       "35 min",
       "SkiErg 4 × 2 min techniek\n• Wall ball 4 × 12 (lichte bal)\n\nStop vóór vermoeidheid.",
+      "ski_wall_pair",
     ),
     day(
       "Za",
@@ -571,6 +593,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Korte race-sim — geen volledige afstand.",
       "60–80 min",
       "Met partner: kies 4–5 stations + korte run-secties (totaal ±25–35 min werk).\n\nVoorbeeld: 3 × (1 km + 1 station) + 2 extra stations.\n\nDoel: flow en communicatie — geen PR vandaag.",
+      "mini_hyrox_and_sim",
     ),
     day("Zo", "Rust", "rest", "—", "—", undefined),
   ],
@@ -593,6 +616,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Herstelweek — instructeur volgen, minder volume.",
       "45–55 min",
       "Geen competitie met jezelf — techniek en ritme.",
+      "hyrox_class",
     ),
     day(
       "Vr",
@@ -631,6 +655,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Vaste les onder hogere weekbelasting.",
       "55–65 min",
       "Focus: consistente bewegingskwaliteit — zelfs als instructie tempo hoog is.",
+      "hyrox_class",
     ),
     day(
       "Vr",
@@ -639,6 +664,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Korte run na lichte stationprikkel.",
       "35 min",
       "3 rondes:\n• Wall ball × 15 (lichte bal)\n• 600 m run direct starten\n\nRust 3 min tussen rondes. Doel: ‘zware benen start’ zonder volume van zaterdag.",
+      "wall_ball_run",
     ),
     day(
       "Za",
@@ -647,6 +673,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Halve tot tweederde race-intensiteit — tijd en energie naar eigen niveau.",
       "70–100 min",
       "Met partner: bouw een parcours dat ongeveer 50% van race-gevoel geeft (afstanden schalen).\n\nVoorbeeld: 4–5 km run totaal + 4 stations op race-gewicht of 1 stap lichter.\n\nHydratie en voeding zoals race — mini dry-run.",
+      "mini_hyrox_and_sim",
     ),
     day("Zo", "Rust", "rest", "—", "—", undefined),
   ],
@@ -669,6 +696,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Vaste les.",
       "55–65 min",
       "Let op hartslagherstel tussen blokken — dat is je race-sensor.",
+      "hyrox_class",
     ),
     day(
       "Vr",
@@ -677,6 +705,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Farmers carry prep.",
       "35 min",
       "Farmers hold 4 × 40 m (licht)\n• Rowing brace 3 × 10\n• Hammer curl 3 × 10 (grip)",
+      "farmers_grip_block",
     ),
     day(
       "Za",
@@ -685,6 +714,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Iets langere / zwaardere sim dan week 15.",
       "80–110 min",
       "Zelfde structuur als 50%-sim maar:\n• +1 station of +1 km run totaal\n• stations dichter bij race-gewicht\n\nStop als techniek 2 rondes achter elkaar breekt.",
+      "mini_hyrox_and_sim",
     ),
     day("Zo", "Rust", "rest", "—", "—", undefined),
   ],
@@ -707,6 +737,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Vaste les.",
       "55–65 min",
       "Mentale cue: ‘rustige handen, snelle benen’ bij run-secties in les.",
+      "hyrox_class",
     ),
     day(
       "Vr",
@@ -715,6 +746,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Korte dubbel — geen PR.",
       "30 min",
       "Ski 3 × 3 min / Row 3 × 3 min — afwisselen, focus stroke rate en relaxed grip.",
+      "ergs_pair",
     ),
     day(
       "Za",
@@ -723,6 +755,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Langere sim — dichter bij race.",
       "90–120 min",
       "Opbouw richting 70% race-gevoel: meer stations of langere run-blokken.\n\nEet 2–3 uur van tevoren licht verteerbaar. Neem race-nutrition mee (zoals op wedstrijd).",
+      "mini_hyrox_and_sim",
     ),
     day("Zo", "Rust", "rest", "—", "—", undefined),
   ],
@@ -745,6 +778,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Vaste les.",
       "55–65 min",
       "Als je moe bent van zaterdag: meld het — schaal in overleg.",
+      "hyrox_class",
     ),
     day(
       "Vr",
@@ -753,6 +787,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Korte compromised block.",
       "32 min",
       "4 rondes: 20 wall balls (lichte bal) + 500 m run — 2 min rust.",
+      "wall_ball_run",
     ),
     day(
       "Za",
@@ -761,6 +796,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Zwaar weekendblok — plan herstel zondag.",
       "100–130 min",
       "80% sim: bijna volledige structuur maar iets korter op run of 1 station minder.\n\nPartner: oefen expliciet ‘wie gaat voor’ bij gecombineerde stukken.\n\nHydratie-agressiever dan normaal (elektrolyten).",
+      "mini_hyrox_and_sim",
     ),
     day("Zo", "Rust / wandelen", "rest", "Herstel zaterdag.", "30–45 min", "Lichte wandeling, veel vocht."),
   ],
@@ -783,6 +819,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Laatste zware lesweek vóór taper — nog steeds techniek.",
       "55–65 min",
       "Geen nieuwe experimenten vandaag.",
+      "hyrox_class",
     ),
     day(
       "Vr",
@@ -799,6 +836,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Laatste grote sim — bijna race.",
       "110–140 min",
       "90%: bijna volledige race-structuur. Alleen inkorten als herstel risico loopt.\n\nNa afloop: noteer nutrition, wat werkte, wat niet. Dit is jullie race-debrief template.",
+      "mini_hyrox_and_sim",
     ),
     day("Zo", "Rust", "rest", "—", "—", undefined),
   ],
@@ -821,6 +859,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Lage intensiteit — gevoel & routine.",
       "45–55 min",
       "Focus op smoothness. Geen nieuwe schoenen of gear.",
+      "hyrox_class",
     ),
     day(
       "Vr",
@@ -837,6 +876,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Afkaderen — geen nieuwe records.",
       "70–90 min",
       "60% alleen om ritme te voelen — stop ruim op tijd. Avond: vroeg slapen.",
+      "mini_hyrox_and_sim",
     ),
     day("Zo", "Rust", "rest", "—", "—", undefined),
   ],
@@ -859,6 +899,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Activatie — geen vermoeidheid.",
       "40–50 min",
       "Laatste les voor race: geniet, adem, routine.",
+      "hyrox_class",
     ),
     day(
       "Vr",
@@ -875,6 +916,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "2 rondes licht — optioneel.",
       "25–35 min",
       "2 rondes: 400 m easy + 10 wall balls licht + 6 burpees. Of volledig rust.",
+      "wall_ball_run",
     ),
     day("Zo", "Rust", "rest", "—", "—", undefined),
   ],
@@ -904,6 +946,7 @@ export const TRAINING_WEEKS: DayWorkout[][] = [
       "Beweging zonder vermoeidheid — ritme voelen.",
       "25–30 min",
       "10 min jog\n• mobiliteit\n• 2 × 6 wall balls (licht)\n• 2 × 100 m strides heel comfortabel\n\nStop ruim.",
+      "light_activation_wall",
     ),
     day(
       "Vr",

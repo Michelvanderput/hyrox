@@ -1,7 +1,7 @@
 "use client";
 
 import { TOTAL_WEEKS } from "@/lib/constants";
-import { getPhaseForWeek } from "@/lib/training-plan";
+import { countWorkoutsInWeek, formatWeekDateRangeNl, getPhaseForWeek } from "@/lib/training-plan";
 import { useTrackerStore } from "@/lib/store";
 
 export function WeekSelector({
@@ -25,15 +25,21 @@ export function WeekSelector({
         const all = p0.done === p0.total && p1.done === p1.total && p0.total > 0;
         const cur = w === currentCalendarWeek;
         const sel = w === selectedWeek;
+        const range = formatWeekDateRangeNl(w, countWorkoutsInWeek(w));
         return (
           <button
             key={w}
             type="button"
-            title={`Week ${w} · ${ph.label}`}
+            title={`Week ${w} · ${ph.label} · ${range}`}
+            aria-current={sel ? "true" : undefined}
             onClick={() => onSelect(w)}
-            className={`relative flex min-h-9 min-w-9 items-center justify-center rounded-xl border border-white/10 px-1 text-xs font-bold transition ${
-              cur ? "border-neon-hot/70 text-neon-hot shadow-[0_0_16px_rgba(163,255,51,0.12)]" : "text-muted hover:border-white/20 hover:text-ink"
-            } ${sel ? "bg-white/[0.06] text-ink ring-1 ring-white/12" : ""}`}
+            className={`relative flex min-h-9 min-w-9 items-center justify-center rounded-xl border px-1 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas ${
+              sel
+                ? "z-[1] border-neon-hot/80 bg-neon-hot/22 text-ink shadow-[0_0_20px_rgba(212,255,0,0.22)] ring-2 ring-neon-hot/90"
+                : cur
+                  ? "border-neon-hot/55 text-neon-hot shadow-[0_0_14px_rgba(163,255,51,0.1)] hover:border-neon-hot/75"
+                  : "border-white/10 text-muted hover:border-white/22 hover:text-ink"
+            }`}
             style={{ borderLeftWidth: 3, borderLeftColor: ph.color }}
           >
             {w}
