@@ -89,8 +89,11 @@ export function LoginForm() {
     <div className="mx-auto max-w-md space-y-4 rounded-3xl border border-edge bg-panel p-6">
       <h1 className="font-heading text-2xl font-black">Login</h1>
       <p className="text-sm text-muted">
-        Magic link of Google. Na login kun je een team aanmaken en je partner uitnodigen via{" "}
-        <code className="text-gold">/invite/&lt;code&gt;</code>.
+        Magic link of Google. Daarna op{" "}
+        <span className="font-semibold text-ink/90">Profiel</span> een duo-team starten — daar zie je
+        de teamcode. Je partner opent op hetzelfde domein bijvoorbeeld{" "}
+        <code className="rounded bg-canvas px-1 py-0.5 text-xs text-gold">/invite/teamcode</code>{" "}
+        (met jullie echte code) of vult de code in waar de app om vraagt.
       </p>
 
       {err && (
