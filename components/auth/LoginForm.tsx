@@ -13,7 +13,8 @@ export function LoginForm() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   const [email, setEmail] = useState("");
-  const [busy, setBusy] = useState<"google" | "magic" | null>(null);
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState<"magic" | "password" | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
 
   const err = searchParams.get("error");
@@ -69,31 +70,41 @@ export function LoginForm() {
     setMsg("Check je inbox voor de magic link.");
   };
 
-  const onGoogle = async () => {
+  const onPasswordLogin = async () => {
     setMsg(null);
-    setBusy("google");
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${origin}/auth/callback?next=/profile`,
-        queryParams: { prompt: "select_account" },
-      },
-    });
-    if (error) {
-      setBusy(null);
-      setMsg(error.message);
+    const trimmed = email.trim();
+    if (!trimmed) {
+      setMsg("Vul je e-mailadres in.");
+      return;
     }
+    if (!password) {
+      setMsg("Vul je wachtwoord in, of gebruik de magic link.");
+      return;
+    }
+    setBusy("password");
+    const { error } = await supabase.auth.signInWithPassword({
+      email: trimmed,
+      password,
+    });
+    setBusy(null);
+    if (error) {
+      setMsg(error.message);
+      return;
+    }
+    window.location.assign("/profile");
   };
 
   return (
     <div className="mx-auto max-w-md space-y-4 rounded-3xl border border-edge bg-panel p-6">
       <h1 className="font-heading text-2xl font-black">Login</h1>
       <p className="text-sm text-muted">
-        Magic link of Google. Daarna op{" "}
-        <span className="font-semibold text-ink/90">Profiel</span> een duo-team starten — daar zie je
-        de teamcode. Je partner opent op hetzelfde domein bijvoorbeeld{" "}
+        <span className="font-semibold text-ink/90">Eerste keer:</span> vraag een magic link.{" "}
+        <span className="font-semibold text-ink/90">Daarna:</span> op{" "}
+        <span className="font-semibold text-ink/90">Profiel</span> kun je een wachtwoord instellen
+        en hieronder mee inloggen. Op Profiel start je je duo-team — daar zie je de teamcode. Je
+        partner opent bijvoorbeeld{" "}
         <code className="rounded bg-canvas px-1 py-0.5 text-xs text-gold">/invite/teamcode</code>{" "}
-        (met jullie echte code) of vult de code in waar de app om vraagt.
+        (met jullie echte code).
       </p>
 
       {err && (
@@ -102,23 +113,9 @@ export function LoginForm() {
         </p>
       )}
 
-      <button
-        type="button"
-        disabled={busy !== null}
-        onClick={onGoogle}
-        className="flex w-full min-h-11 items-center justify-center gap-2 rounded-xl border border-edge-hover bg-canvas text-sm font-semibold hover:border-gold/40 disabled:opacity-50"
-      >
-        {busy === "google" ? "Doorsturen…" : "Verder met Google"}
-      </button>
-
-      <div className="relative py-2 text-center text-[11px] text-faint">
-        <span className="relative z-10 bg-panel px-2">of</span>
-        <div className="absolute inset-x-0 top-1/2 h-px bg-edge" />
-      </div>
-
       <form onSubmit={onMagicLink} className="space-y-3">
         <label className="block space-y-1 text-xs font-semibold uppercase tracking-wide text-muted">
-          E-mail (magic link)
+          E-mail
           <input
             required
             type="email"
@@ -134,9 +131,36 @@ export function LoginForm() {
           disabled={busy !== null}
           className="w-full min-h-11 rounded-xl bg-gold text-sm font-bold text-canvas disabled:opacity-50"
         >
-          {busy === "magic" ? "Versturen…" : "Stuur magic link"}
+          {busy === "magic" ? "Versturen…" : "Stuur magic link (eerste keer)"}
         </button>
       </form>
+
+      <div className="relative py-2 text-center text-[11px] text-faint">
+        <span className="relative z-10 bg-panel px-2">of</span>
+        <div className="absolute inset-x-0 top-1/2 h-px bg-edge" />
+      </div>
+
+      <div className="space-y-3">
+        <label className="block space-y-1 text-xs font-semibold uppercase tracking-wide text-muted">
+          Wachtwoord (als je die op Profiel hebt ingesteld)
+          <input
+            type="password"
+            autoComplete="current-password"
+            className="mt-1 w-full min-h-11 rounded-xl border border-edge bg-canvas px-3 text-sm"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+          />
+        </label>
+        <button
+          type="button"
+          disabled={busy !== null}
+          onClick={() => void onPasswordLogin()}
+          className="w-full min-h-11 rounded-xl border border-edge-hover bg-canvas text-sm font-semibold hover:border-gold/40 disabled:opacity-50"
+        >
+          {busy === "password" ? "Inloggen…" : "Inloggen met wachtwoord"}
+        </button>
+      </div>
 
       {msg && <p className="text-sm text-muted">{msg}</p>}
 
