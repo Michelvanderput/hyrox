@@ -6,7 +6,7 @@
     "next": "16.2.3"
   },
   "scripts": {
-    "build": "npm ci --prefix hyrox-tracker && npm run build --prefix hyrox-tracker",
+    "build": "npm install --no-audit --no-fund --prefix hyrox-tracker && npm run build --prefix hyrox-tracker",
     "dev": "npm run dev --prefix hyrox-tracker",
     "lint": "npm run lint --prefix hyrox-tracker"
   }

@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "installCommand": "npm ci --prefix hyrox-tracker",
-  "buildCommand": "npm run build --prefix hyrox-tracker"
+  "installCommand": "if [ -f hyrox-tracker/package.json ]; then npm install --no-audit --no-fund --prefix hyrox-tracker; else npm install --no-audit --no-fund; fi",
+  "buildCommand": "if [ -f hyrox-tracker/package.json ]; then npm run build --prefix hyrox-tracker; else npm run build; fi"
 }
