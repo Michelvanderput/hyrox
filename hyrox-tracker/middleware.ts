@@ -4,10 +4,10 @@ import type { NextRequest } from "next/server";
 import { updateSession } from "./lib/supabase/middleware";
 
 /**
- * Next.js 16+: use `proxy` (Node.js runtime). Deprecated `middleware` runs on
- * Edge and often breaks Supabase session refresh on Vercel.
+ * Vercel routes this reliably as Edge middleware. `proxy.ts` (Node) has
+ * caused NOT_FOUND for some deployments; session refresh stays in updateSession.
  */
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   try {
     return await updateSession(request);
   } catch {
