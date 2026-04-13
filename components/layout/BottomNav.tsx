@@ -18,11 +18,10 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-5 left-1/2 z-40 w-[calc(100%-1.25rem)] max-w-md -translate-x-1/2 rounded-full border border-white/[0.08] bg-[#121214]/92 px-1.5 py-1.5 shadow-[0_16px_48px_rgba(0,0,0,0.75)] backdrop-blur-2xl"
-      style={{ paddingBottom: "max(6px, env(safe-area-inset-bottom))" }}
+      className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom,0.5rem))] left-1/2 z-40 w-[calc(100%-1.25rem)] max-w-md -translate-x-1/2 rounded-full border border-white/[0.08] bg-[#121214]/92 px-1 py-1.5 shadow-[0_16px_48px_rgba(0,0,0,0.75)] backdrop-blur-2xl sm:px-1.5"
       aria-label="Hoofdnavigatie"
     >
-      <div className="flex items-center justify-between gap-0.5">
+      <div className="flex items-stretch justify-between gap-0.5">
         {NAV.map((item) => {
           const active =
             item.href === "/"
@@ -33,7 +32,8 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex min-h-11 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[10px] font-semibold tracking-wide transition-all ${
+              title={item.label}
+              className={`flex min-h-12 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-1 text-[8px] font-semibold leading-tight tracking-wide transition-all sm:min-h-11 sm:gap-0.5 sm:py-1.5 sm:text-[10px] ${
                 active
                   ? "text-neon-hot drop-shadow-[0_0_12px_rgba(212,255,0,0.35)]"
                   : "text-muted hover:text-ink"
@@ -41,11 +41,11 @@ export function BottomNav() {
               aria-current={active ? "page" : undefined}
             >
               <Icon
-                className="size-[1.35rem] shrink-0"
+                className="size-[1.35rem] shrink-0 sm:size-[1.35rem]"
                 strokeWidth={active ? 2.25 : 1.65}
                 aria-hidden
               />
-              <span className="hidden sm:inline">{item.label}</span>
+              <span className="max-w-[4.2rem] truncate text-center sm:max-w-[5.5rem]">{item.label}</span>
             </Link>
           );
         })}

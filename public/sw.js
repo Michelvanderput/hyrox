@@ -1,4 +1,5 @@
-const CACHE = "hyrox-static-v1";
+/** Alleen statische assets; geen HTML-navigatie cachen (auth / PWA-frisheid). */
+const CACHE = "hyrox-static-v2";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -24,16 +25,8 @@ self.addEventListener("fetch", (event) => {
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
-        .then((response) => {
-          const copy = response.clone();
-          if (response.ok) {
-            caches.open(CACHE).then((cache) => cache.put(request, copy));
-          }
-          return response;
-        })
-        .catch(() =>
-          caches.match(request).then((cached) => cached || caches.match("/offline")),
-        ),
+        .then((response) => response)
+        .catch(() => caches.match("/offline")),
     );
     return;
   }

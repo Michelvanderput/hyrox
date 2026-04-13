@@ -27,9 +27,18 @@ export const metadata: Metadata = {
     title: "HYROX",
     statusBarStyle: "black-translucent",
   },
+  formatDetection: {
+    telephone: false,
+    date: false,
+    address: false,
+    email: false,
+  },
   icons: {
     icon: [{ url: "/icons/pwa-192.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/icons/pwa-192.svg" }],
+    apple: [
+      { url: "/icons/pwa-192.svg" },
+      { url: "/icons/pwa-512.svg", sizes: "512x512", type: "image/svg+xml" },
+    ],
   },
 };
 
@@ -38,6 +47,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
+  viewportFit: "cover",
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({

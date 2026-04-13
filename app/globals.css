@@ -54,6 +54,8 @@
 @layer base {
   html {
     color-scheme: dark;
+    /* iOS PWA / Safari: voorkom overscroll bounce flash */
+    background-color: var(--bg-primary);
   }
 
   body {
@@ -61,6 +63,23 @@
     color: var(--text-primary);
     font-family: var(--font-sans);
     min-height: 100dvh;
+    /* Veilige gebieden iPhone (notch / home indicator) */
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* iOS zoomt op focus bij font-size < 16px op inputs */
+  @media (max-width: 639.98px) {
+    input,
+    textarea,
+    select {
+      font-size: 1rem;
+    }
+  }
+
+  button,
+  a[href] {
+    touch-action: manipulation;
   }
 
   ::selection {
