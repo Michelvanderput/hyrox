@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="HYROX">
+  <rect width="512" height="512" rx="120" fill="#000"/>
+  <circle cx="256" cy="256" r="190" fill="none" stroke="url(#g)" stroke-width="28"/>
+  <text x="256" y="288" text-anchor="middle" font-family="system-ui,sans-serif" font-size="112" font-weight="800" fill="#d4ff00">H</text>
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#a3ff33"/>
+    </linearGradient>
+  </defs>
+</svg>

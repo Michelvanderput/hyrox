@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+/* Premium fitness UI: diep zwart, charcoal cards, neon lime + cyan */
+:root {
+  --bg-primary: #000000;
+  --bg-card: #1c1c1e;
+  --bg-card-hover: #252528;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --accent-neon: #a3ff33;
+  --accent-neon-hot: #d4ff00;
+  --accent-cyan: #22d3ee;
+  --accent-gold: #d4ff00;
+  --accent-blue: #38bdf8;
+  --accent-pink: #fb7185;
+  --accent-purple: #a78bfa;
+  --accent-green: #4ade80;
+  --accent-orange: #fb923c;
+  --accent-red: #f87171;
+  --accent-teal: #2dd4bf;
+  --radius-card: 1.5rem;
+}
+
+@theme inline {
+  --color-canvas: var(--bg-primary);
+  --color-panel: var(--bg-card);
+  --color-panel-hover: var(--bg-card-hover);
+  --color-edge: var(--border);
+  --color-edge-hover: var(--border-hover);
+  --color-ink: var(--text-primary);
+  --color-muted: var(--text-secondary);
+  --color-faint: var(--text-muted);
+  --color-gold: var(--accent-gold);
+  --color-neon: var(--accent-neon);
+  --color-neon-hot: var(--accent-neon-hot);
+  --color-cyan: var(--accent-cyan);
+  --color-run: var(--accent-blue);
+  --color-station: var(--accent-pink);
+  --color-gym: var(--accent-purple);
+  --color-combo: var(--accent-neon-hot);
+  --color-class: var(--accent-teal);
+  --color-rest: var(--text-muted);
+  --color-race: var(--accent-red);
+  --color-success: var(--accent-green);
+  --color-warn: var(--accent-orange);
+  --radius-3xl: var(--radius-card);
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--accent-neon) 40%, transparent);
+    color: var(--text-primary);
+  }
+}
+
+/* Gradient fill + subtiele strepen (referentie progress bars) */
+.hyrox-neon-fill {
+  position: relative;
+  background: linear-gradient(
+    90deg,
+    var(--accent-cyan) 0%,
+    var(--accent-neon) 45%,
+    var(--accent-neon-hot) 100%
+  );
+  box-shadow: 0 0 20px color-mix(in srgb, var(--accent-neon) 25%, transparent);
+}
+
+.hyrox-neon-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.12) 3px,
+    rgba(0, 0, 0, 0.12) 6px
+  );
+  pointer-events: none;
+}
+
+/* Card “glass” / elevated */
+.hyrox-card {
+  border-radius: var(--radius-card);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.hyrox-card--glow {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent-cyan) 12%, transparent),
+    0 18px 48px rgba(0, 0, 0, 0.55);
+}
+
+/* Primaire knoppen */
+.hyrox-btn-primary {
+  border-radius: 0.875rem;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent-cyan) 85%, black) 0%,
+    var(--accent-neon) 50%,
+    var(--accent-neon-hot) 100%
+  );
+  color: #0a0a0b;
+  font-weight: 700;
+  box-shadow: 0 4px 24px color-mix(in srgb, var(--accent-neon) 22%, transparent);
+}
+
+.hyrox-btn-primary:hover {
+  filter: brightness(1.06);
+}
+
+.hyrox-btn-ghost {
+  border-radius: 0.875rem;
+  border: 1px solid var(--border-hover);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+}
+
+.hyrox-btn-ghost:hover {
+  border-color: color-mix(in srgb, var(--accent-neon) 35%, transparent);
+  color: var(--accent-neon-hot);
+}
+
+@keyframes hyrox-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px color-mix(in srgb, var(--accent-neon) 14%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 36px color-mix(in srgb, var(--accent-cyan) 18%, transparent);
+  }
+}
+
+.hyrox-glow {
+  animation: hyrox-glow 5s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hyrox-glow {
+    animation: none;
+  }
+}

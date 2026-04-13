@@ -1,0 +1,14 @@
+# Local secrets (never commit)
+.env.local
+.env*.local
+
+# Dependencies & build output (also covered in hyrox-tracker/.gitignore)
+**/node_modules/
+**/.next/
+**/out/
+**/dist/
+**/.turbo/
+
+# OS / tooling
+.DS_Store
+.claude/
