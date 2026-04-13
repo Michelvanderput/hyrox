@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useReducedMotion, PanInfo } from "framer-motion";
 
 import { TOTAL_WEEKS } from "@/lib/constants";
@@ -19,10 +19,34 @@ export function PlanClient({
   const reduce = useReducedMotion();
   const selectedWeek = useTrackerStore((s) => s.selectedWeek);
   const setSelectedWeek = useTrackerStore((s) => s.setSelectedWeek);
+  const getDayOrderForWeek = useTrackerStore((s) => s.getDayOrderForWeek);
+  const swapWeekDayVisualPositions = useTrackerStore((s) => s.swapWeekDayVisualPositions);
+  const resetWeekDayOrder = useTrackerStore((s) => s.resetWeekDayOrder);
   const appliedUrlWeek = useRef(false);
   const cw = getCurrentWeekNumber();
   const phase = getPhaseForWeek(selectedWeek);
   const days = generateWeek(selectedWeek);
+  const dayOrder = getDayOrderForWeek(selectedWeek, days.length);
+
+  const [swapPickVisual, setSwapPickVisual] = useState<number | null>(null);
+
+  const clearSwapPick = useCallback(() => setSwapPickVisual(null), []);
+
+  const onSwapTap = useCallback(
+    (visualIndex: number) => {
+      if (swapPickVisual === null) {
+        setSwapPickVisual(visualIndex);
+        return;
+      }
+      if (swapPickVisual === visualIndex) {
+        setSwapPickVisual(null);
+        return;
+      }
+      swapWeekDayVisualPositions(selectedWeek, swapPickVisual, visualIndex);
+      setSwapPickVisual(null);
+    },
+    [selectedWeek, swapPickVisual, swapWeekDayVisualPositions],
+  );
 
   useEffect(() => {
     if (appliedUrlWeek.current) return;
@@ -34,6 +58,7 @@ export function PlanClient({
   }, [initialWeekFromUrl, setSelectedWeek]);
 
   const go = (delta: number) => {
+    clearSwapPick();
     setSelectedWeek(selectedWeek + delta);
   };
 
@@ -57,6 +82,17 @@ export function PlanClient({
         <p className="mt-1 text-sm text-muted">
           Swipe links/rechts om van week te wisselen · {phase.label}
         </p>
+        {swapPickVisual !== null ? (
+          <p className="mt-2 rounded-xl border border-gold/35 bg-gold/10 px-3 py-2 text-xs text-ink">
+            Tik op <span className="font-semibold">↔</span> bij een andere dag om de volgorde te
+            ruilen, of opnieuw op dezelfde knop om te annuleren.
+          </p>
+        ) : (
+          <p className="mt-2 text-[11px] text-faint">
+            Tip: <span className="font-semibold text-muted">↔</span> op een dag om trainingen in
+            deze week te herschikken (alleen volgorde in de lijst; je vinkt nog steeds per dag af).
+          </p>
+        )}
       </header>
 
       <PhaseBanner weekNumber={selectedWeek} />
@@ -65,7 +101,10 @@ export function PlanClient({
         <button
           type="button"
           className="hyrox-btn-primary min-h-11 rounded-full px-4 text-xs"
-          onClick={() => setSelectedWeek(cw)}
+          onClick={() => {
+            clearSwapPick();
+            setSelectedWeek(cw);
+          }}
         >
           Deze week
         </button>
@@ -85,6 +124,14 @@ export function PlanClient({
         >
           Volgende →
         </button>
+        <button
+          type="button"
+          className="hyrox-btn-ghost min-h-11 rounded-full px-4 text-xs font-semibold text-muted hover:text-ink"
+          onClick={() => resetWeekDayOrder(selectedWeek)}
+          title="Weekvolgorde terug naar schema"
+        >
+          Reset weekvolgorde
+        </button>
       </div>
 
       <div>
@@ -94,7 +141,10 @@ export function PlanClient({
         <WeekSelector
           currentCalendarWeek={cw}
           selectedWeek={selectedWeek}
-          onSelect={setSelectedWeek}
+          onSelect={(w) => {
+            clearSwapPick();
+            setSelectedWeek(w);
+          }}
         />
       </div>
 
@@ -109,9 +159,20 @@ export function PlanClient({
         transition={{ duration: 0.28, ease: "easeOut" }}
         className="space-y-2.5"
       >
-        {days.map((d, di) => (
-          <DayRow key={d.dayLabel} weekNumber={selectedWeek} dayIndex={di} workout={d} />
-        ))}
+        {dayOrder.map((origDi, visualIndex) => {
+          const d = days[origDi]!;
+          return (
+            <DayRow
+              key={`${selectedWeek}-${origDi}`}
+              weekNumber={selectedWeek}
+              dayIndex={origDi}
+              workout={d}
+              visualIndex={visualIndex}
+              swapPickVisual={swapPickVisual}
+              onSwapTap={onSwapTap}
+            />
+          );
+        })}
       </motion.div>
     </div>
   );

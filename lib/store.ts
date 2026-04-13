@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
+import { canEditAthleteSlot } from "@/lib/athlete-ui";
 import { PHASES, TOTAL_WEEKS } from "@/lib/constants";
 import { completionKey, parseCompletionKey } from "@/lib/utils";
 import { generateWeek } from "@/lib/training-plan";
@@ -24,6 +25,14 @@ interface TrackerState {
   memberUserIds: [string | null, string | null];
   /** Zelfde volgorde als atleten na sorteren op userId (zoals workspace-snapshot). */
   memberMotivations: [string | null, string | null];
+  /** Ingelogde gebruiker (browser); voor RLS op toggles. */
+  viewerUserId: string | null;
+  /** Per week: visuele volgorde = indices in generateWeek(week). */
+  weekDayOrder: Record<number, number[]>;
+  setViewerUserId: (id: string | null) => void;
+  getDayOrderForWeek: (weekNumber: number, dayCount: number) => number[];
+  swapWeekDayVisualPositions: (weekNumber: number, visualA: number, visualB: number) => void;
+  resetWeekDayOrder: (weekNumber: number) => void;
   setAthleteName: (index: 0 | 1, name: string) => void;
   setSelectedWeek: (week: number) => void;
   toggleCompletion: (athleteIndex: 0 | 1, weekNumber: number, dayIndex: number) => void;
@@ -54,6 +63,7 @@ interface TrackerState {
     teamId: string;
     members: CloudMemberSnapshot[];
     completions: CloudCompletionRow[];
+    viewerUserId: string | null;
   }) => void;
   clearCloudWorkspace: () => void;
   applyRemoteCompletionPayload: (input: {
@@ -84,8 +94,39 @@ export const useTrackerStore = create<TrackerState>()(
       activeTeamId: null,
       memberUserIds: [null, null],
       memberMotivations: [null, null],
+      viewerUserId: null,
+      weekDayOrder: {},
 
-      applyWorkspaceSnapshot: ({ teamId, members, completions }) => {
+      setViewerUserId: (id) => set({ viewerUserId: id }),
+
+      getDayOrderForWeek: (weekNumber, dayCount) => {
+        const custom = get().weekDayOrder[weekNumber];
+        if (custom && custom.length === dayCount) return [...custom];
+        return Array.from({ length: dayCount }, (_, i) => i);
+      },
+
+      swapWeekDayVisualPositions: (weekNumber, visualA, visualB) => {
+        if (visualA === visualB) return;
+        const dayCount = generateWeek(weekNumber).length;
+        set((s) => {
+          const prev = s.weekDayOrder[weekNumber];
+          const order =
+            prev && prev.length === dayCount ? [...prev] : Array.from({ length: dayCount }, (_, i) => i);
+          const tmp = order[visualA]!;
+          order[visualA] = order[visualB]!;
+          order[visualB] = tmp;
+          return { weekDayOrder: { ...s.weekDayOrder, [weekNumber]: order } };
+        });
+      },
+
+      resetWeekDayOrder: (weekNumber) =>
+        set((s) => {
+          const next = { ...s.weekDayOrder };
+          delete next[weekNumber];
+          return { weekDayOrder: next };
+        }),
+
+      applyWorkspaceSnapshot: ({ teamId, members, completions, viewerUserId: vu }) => {
         const sorted = [...members].sort((a, b) => a.userId.localeCompare(b.userId));
         const id0 = sorted[0]?.userId ?? null;
         const id1 = sorted[1]?.userId ?? null;
@@ -137,6 +178,7 @@ export const useTrackerStore = create<TrackerState>()(
             athleteNames,
             completions: nextCompletions,
             completionMeta: nextMeta,
+            viewerUserId: vu,
           };
         });
       },
@@ -207,6 +249,17 @@ export const useTrackerStore = create<TrackerState>()(
         set({ selectedWeek: Math.max(1, Math.min(TOTAL_WEEKS, week)) }),
 
       toggleCompletion: (athleteIndex, weekNumber, dayIndex) => {
+        const s0 = get();
+        if (
+          !canEditAthleteSlot(
+            s0.viewerUserId,
+            s0.activeTeamId,
+            s0.memberUserIds,
+            athleteIndex,
+          )
+        ) {
+          return;
+        }
         const key = completionKey(athleteIndex, weekNumber, dayIndex);
         set((s) => {
           const on = !s.completions[key];
@@ -220,6 +273,17 @@ export const useTrackerStore = create<TrackerState>()(
       },
 
       setCompletionMeta: (athleteIndex, weekNumber, dayIndex, meta) => {
+        const s0 = get();
+        if (
+          !canEditAthleteSlot(
+            s0.viewerUserId,
+            s0.activeTeamId,
+            s0.memberUserIds,
+            athleteIndex,
+          )
+        ) {
+          return;
+        }
         const key = completionKey(athleteIndex, weekNumber, dayIndex);
         set((s) => ({
           completionMeta: { ...s.completionMeta, [key]: { ...s.completionMeta[key], ...meta } },
@@ -259,6 +323,8 @@ export const useTrackerStore = create<TrackerState>()(
           activeTeamId: string | null;
           memberUserIds: [string | null, string | null];
           memberMotivations: [string | null, string | null];
+          viewerUserId: string | null;
+          weekDayOrder: Record<number, number[]>;
         }>;
         set({
           athleteNames: d.athleteNames ?? get().athleteNames,
@@ -272,6 +338,11 @@ export const useTrackerStore = create<TrackerState>()(
             Array.isArray(d.memberMotivations) && d.memberMotivations.length === 2
               ? d.memberMotivations
               : [null, null],
+          viewerUserId: d.viewerUserId ?? get().viewerUserId,
+          weekDayOrder:
+            d.weekDayOrder && typeof d.weekDayOrder === "object"
+              ? d.weekDayOrder
+              : get().weekDayOrder,
         });
       },
 
@@ -286,6 +357,8 @@ export const useTrackerStore = create<TrackerState>()(
             activeTeamId: get().activeTeamId,
             memberUserIds: get().memberUserIds,
             memberMotivations: get().memberMotivations,
+            viewerUserId: get().viewerUserId,
+            weekDayOrder: get().weekDayOrder,
           },
           null,
           2,
@@ -367,6 +440,8 @@ export const useTrackerStore = create<TrackerState>()(
         prEntries: s.prEntries,
         activeTeamId: s.activeTeamId,
         memberUserIds: s.memberUserIds,
+        viewerUserId: s.viewerUserId,
+        weekDayOrder: s.weekDayOrder,
       }),
     },
   ),

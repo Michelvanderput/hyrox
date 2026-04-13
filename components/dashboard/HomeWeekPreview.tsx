@@ -14,7 +14,9 @@ export function HomeWeekPreview({ weekNumber }: { weekNumber: number }) {
   const completions = useTrackerStore((s) => s.completions);
   const names = useTrackerStore((s) => s.athleteNames);
   const getWeekProgress = useTrackerStore((s) => s.getWeekProgress);
+  const getDayOrderForWeek = useTrackerStore((s) => s.getDayOrderForWeek);
   const days = generateWeek(weekNumber);
+  const dayOrder = getDayOrderForWeek(weekNumber, days.length);
 
   const w0 = getWeekProgress(0, weekNumber);
   const w1 = getWeekProgress(1, weekNumber);
@@ -40,10 +42,11 @@ export function HomeWeekPreview({ weekNumber }: { weekNumber: number }) {
         <p className="mt-1.5 text-[10px] text-faint">Beide atleten samen · {weekPct}% van deze week</p>
       </div>
       <ul className="mt-4 space-y-2">
-        {days.map((d, di) => {
+        {dayOrder.map((origDi) => {
+          const d = days[origDi]!;
           const meta = WORKOUT_TYPE_META[d.type];
-          const a0 = completions[completionKey(0, weekNumber, di)];
-          const a1 = completions[completionKey(1, weekNumber, di)];
+          const a0 = completions[completionKey(0, weekNumber, origDi)];
+          const a1 = completions[completionKey(1, weekNumber, origDi)];
           return (
             <li
               key={d.dayLabel}

@@ -7,9 +7,9 @@ import { motion, useReducedMotion } from "framer-motion";
 import { resolveTodayWorkout } from "@/lib/today-workout";
 import { getWorkoutExtraCopy } from "@/lib/workout-detail-copy";
 import { WORKOUT_TYPE_META } from "@/lib/workout-styles";
+import { canEditAthleteSlot } from "@/lib/athlete-ui";
 import { completionKey } from "@/lib/utils";
 import { useTrackerStore } from "@/lib/store";
-import { useTrainingCloud } from "@/context/TrainingCloudContext";
 import { pushCompletionSnapshot } from "@/lib/sync/push-completion";
 import { appToast } from "@/lib/toast-store";
 import { trackEvent } from "@/lib/analytics";
@@ -18,7 +18,6 @@ import { NeonProgressBar } from "@/components/ui/NeonProgressBar";
 
 export function WorkoutVandaagClient() {
   const reduce = useReducedMotion();
-  const { userId } = useTrainingCloud();
   const ctx = useMemo(() => resolveTodayWorkout(), []);
   const { weekNumber, dayIndex, workout, phaseLabel, dateLabel } = ctx;
   const extra = getWorkoutExtraCopy(workout.type);
@@ -28,24 +27,16 @@ export function WorkoutVandaagClient() {
   const completions = useTrackerStore((s) => s.completions);
   const activeTeamId = useTrackerStore((s) => s.activeTeamId);
   const memberUserIds = useTrackerStore((s) => s.memberUserIds);
+  const viewerUserId = useTrackerStore((s) => s.viewerUserId);
   const toggleCompletion = useTrackerStore((s) => s.toggleCompletion);
   const getWeekProgress = useTrackerStore((s) => s.getWeekProgress);
 
   const [burst, setBurst] = useState(false);
 
-  const workspaceReady = !!(
-    activeTeamId &&
-    (memberUserIds[0] !== null || memberUserIds[1] !== null)
-  );
-
   const canEditAthlete = useCallback(
-    (athlete: 0 | 1) => {
-      if (!userId || !workspaceReady) return true;
-      const mid = memberUserIds[athlete];
-      if (!mid) return false;
-      return mid === userId;
-    },
-    [memberUserIds, userId, workspaceReady],
+    (athlete: 0 | 1) =>
+      canEditAthleteSlot(viewerUserId, activeTeamId, memberUserIds, athlete),
+    [memberUserIds, viewerUserId, activeTeamId],
   );
 
   const w0 = getWeekProgress(0, weekNumber);
@@ -81,10 +72,10 @@ export function WorkoutVandaagClient() {
           }
         }
       }
-      if (userId && workspaceReady && memberUserIds[athlete] === userId) {
+      if (viewerUserId && activeTeamId && memberUserIds[athlete] === viewerUserId) {
         void (async () => {
           const res = await pushCompletionSnapshot({
-            userId,
+            userId: viewerUserId,
             athleteIndex: athlete,
             weekNumber,
             dayIndex,
@@ -102,9 +93,9 @@ export function WorkoutVandaagClient() {
       memberUserIds,
       reduce,
       toggleCompletion,
-      userId,
+      viewerUserId,
       weekNumber,
-      workspaceReady,
+      activeTeamId,
     ],
   );
 

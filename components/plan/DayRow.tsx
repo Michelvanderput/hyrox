@@ -2,12 +2,13 @@
 
 import { useCallback, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { ArrowLeftRight } from "lucide-react";
 
 import type { DayWorkout } from "@/types";
+import { canEditAthleteSlot } from "@/lib/athlete-ui";
 import { completionKey } from "@/lib/utils";
 import { useTrackerStore } from "@/lib/store";
 import { WORKOUT_TYPE_META } from "@/lib/workout-styles";
-import { useTrainingCloud } from "@/context/TrainingCloudContext";
 import { appToast } from "@/lib/toast-store";
 import { pushCompletionSnapshot } from "@/lib/sync/push-completion";
 
@@ -50,17 +51,23 @@ export function DayRow({
   weekNumber,
   dayIndex,
   workout,
+  visualIndex,
+  swapPickVisual,
+  onSwapTap,
 }: {
   weekNumber: number;
   dayIndex: number;
   workout: DayWorkout;
+  visualIndex: number;
+  swapPickVisual: number | null;
+  onSwapTap: (visualIndex: number) => void;
 }) {
   const reduce = useReducedMotion();
-  const { userId } = useTrainingCloud();
   const names = useTrackerStore((s) => s.athleteNames);
   const completions = useTrackerStore((s) => s.completions);
   const activeTeamId = useTrackerStore((s) => s.activeTeamId);
   const memberUserIds = useTrackerStore((s) => s.memberUserIds);
+  const viewerUserId = useTrackerStore((s) => s.viewerUserId);
   const toggleCompletion = useTrackerStore((s) => s.toggleCompletion);
 
   const [drawer, setDrawer] = useState(false);
@@ -68,19 +75,10 @@ export function DayRow({
 
   const style = WORKOUT_TYPE_META[workout.type];
 
-  const workspaceReady = !!(
-    activeTeamId &&
-    (memberUserIds[0] !== null || memberUserIds[1] !== null)
-  );
-
   const canEditAthlete = useCallback(
-    (athlete: 0 | 1) => {
-      if (!userId || !workspaceReady) return true;
-      const mid = memberUserIds[athlete];
-      if (!mid) return false;
-      return mid === userId;
-    },
-    [memberUserIds, userId, workspaceReady],
+    (athlete: 0 | 1) =>
+      canEditAthleteSlot(viewerUserId, activeTeamId, memberUserIds, athlete),
+    [memberUserIds, viewerUserId, activeTeamId],
   );
 
   const onToggle = useCallback(
@@ -100,10 +98,10 @@ export function DayRow({
           }
         }
       }
-      if (userId && workspaceReady && memberUserIds[athlete] === userId) {
+      if (viewerUserId && activeTeamId && memberUserIds[athlete] === viewerUserId) {
         void (async () => {
           const res = await pushCompletionSnapshot({
-            userId,
+            userId: viewerUserId,
             athleteIndex: athlete,
             weekNumber,
             dayIndex,
@@ -121,17 +119,25 @@ export function DayRow({
       memberUserIds,
       reduce,
       toggleCompletion,
-      userId,
+      viewerUserId,
       weekNumber,
-      workspaceReady,
+      activeTeamId,
     ],
   );
+
+  const isSwapSource = swapPickVisual === visualIndex;
 
   return (
     <>
       <motion.article
         layout
-        className={`relative grid grid-cols-[44px_1fr_auto] items-center gap-3 overflow-visible rounded-3xl border px-3 py-3 sm:grid-cols-[52px_1fr_auto] sm:px-4 ${style.border} ${style.bg}`}
+        className={`relative grid grid-cols-[44px_1fr_auto] items-center gap-3 overflow-visible rounded-3xl border px-3 py-3 sm:grid-cols-[52px_1fr_auto] sm:px-4 ${style.border} ${style.bg} ${
+          swapPickVisual !== null
+            ? isSwapSource
+              ? "ring-2 ring-gold/70 ring-offset-2 ring-offset-canvas"
+              : "ring-1 ring-white/15"
+            : ""
+        }`}
       >
         <ConfettiBurst active={burst} />
         <button
@@ -151,45 +157,60 @@ export function DayRow({
           <p className="mt-1 text-[12px] leading-relaxed text-muted">{workout.description}</p>
           <p className="mt-1 text-[10px] text-faint">⏱ {workout.durationLabel}</p>
         </button>
-        <div className="flex gap-2">
-          {([0, 1] as const).map((ai) => {
-            const on = !!completions[completionKey(ai, weekNumber, dayIndex)];
-            const col = ai === 0 ? "var(--accent-blue)" : "var(--accent-pink)";
-            const editable = canEditAthlete(ai);
-            return (
-              <div key={ai} className="relative flex flex-col items-center gap-1">
-                <motion.button
-                  type="button"
-                  disabled={!editable}
-                  whileTap={reduce || !editable ? undefined : { scale: 0.92 }}
-                  className="relative flex size-11 items-center justify-center rounded-xl border-2 transition disabled:cursor-not-allowed disabled:opacity-35"
-                  style={{
-                    borderColor: on ? col : "var(--border-hover)",
-                    background: on ? col : "transparent",
-                  }}
-                  aria-pressed={on}
-                  aria-label={`${names[ai]}: ${on ? "voltooid" : "nog niet"}`}
-                  title={!editable ? "Alleen de atleet zelf kan dit afvinken (cloud)" : undefined}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onToggle(ai);
-                  }}
-                >
-                  {on && (
-                    <span className="text-sm font-black text-canvas" aria-hidden>
-                      ✓
-                    </span>
-                  )}
-                </motion.button>
-                <span
-                  className="max-w-[52px] truncate text-[9px] font-semibold"
-                  style={{ color: col }}
-                >
-                  {(names[ai] || `A${ai + 1}`).slice(0, 8)}
-                </span>
-              </div>
-            );
-          })}
+        <div className="flex flex-col items-end gap-2">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSwapTap(visualIndex);
+            }}
+            className="flex size-9 items-center justify-center rounded-xl border border-white/12 text-muted transition hover:border-gold/40 hover:text-gold"
+            title="Ruil volgorde in deze week (tweede dag aantikken)"
+            aria-pressed={isSwapSource}
+          >
+            <ArrowLeftRight className="size-4" aria-hidden />
+          </button>
+          <div className="flex gap-2">
+            {([0, 1] as const).map((ai) => {
+              const on = !!completions[completionKey(ai, weekNumber, dayIndex)];
+              const col = ai === 0 ? "var(--accent-blue)" : "var(--accent-pink)";
+              const editable = canEditAthlete(ai);
+              return (
+                <div key={ai} className="relative flex flex-col items-center gap-1">
+                  <motion.button
+                    type="button"
+                    disabled={!editable}
+                    whileTap={reduce || !editable ? undefined : { scale: 0.92 }}
+                    className="relative flex size-11 items-center justify-center rounded-xl border-2 transition disabled:cursor-not-allowed disabled:opacity-35"
+                    style={{
+                      borderColor: on ? col : "var(--border-hover)",
+                      background: on ? col : "transparent",
+                    }}
+                    aria-pressed={on}
+                    aria-label={`${names[ai]}: ${on ? "voltooid" : "nog niet"}`}
+                    title={!editable ? "Alleen je eigen workouts afvinken" : undefined}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggle(ai);
+                    }}
+                  >
+                    {on && (
+                      <span className="text-sm font-black text-canvas" aria-hidden>
+                        ✓
+                      </span>
+                    )}
+                  </motion.button>
+                  <span
+                    className="max-w-[52px] truncate text-[9px] font-semibold"
+                    style={{ color: col }}
+                    title={names[ai]}
+                  >
+                    {names[ai]?.slice(0, 10) || `T${ai + 1}`}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </motion.article>
 

@@ -23,9 +23,12 @@ export function AthleteRingCard({
   const setAthleteName = useTrackerStore((s) => s.setAthleteName);
   const getTotalProgress = useTrackerStore((s) => s.getTotalProgress);
   const getWeekProgress = useTrackerStore((s) => s.getWeekProgress);
+  const activeTeamId = useTrackerStore((s) => s.activeTeamId);
+  const memberUserIds = useTrackerStore((s) => s.memberUserIds);
 
   const [editing, setEditing] = useState(false);
   const name = names[athleteIndex];
+  const nameFromCloud = !!(activeTeamId && memberUserIds[athleteIndex]);
   const accent = athleteIndex === 0 ? { label: "text-cyan" as const } : { label: "text-neon-hot" as const };
   const total = getTotalProgress(athleteIndex);
   const week = getWeekProgress(athleteIndex, weekNumber);
@@ -39,7 +42,14 @@ export function AthleteRingCard({
     <div className="hyrox-card border-white/[0.07] p-4 sm:p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          {editing ? (
+          {nameFromCloud ? (
+            <span
+              className={`block max-w-full truncate font-heading text-base font-bold ${accent.label}`}
+              title="Naam uit je team / profiel"
+            >
+              {name || `Teamlid ${athleteIndex === 0 ? "A" : "B"}`}
+            </span>
+          ) : editing ? (
             <input
               autoFocus
               className="w-full border-b border-dashed border-white/20 bg-transparent font-heading text-base font-bold text-ink outline-none focus:border-neon"
@@ -56,7 +66,7 @@ export function AthleteRingCard({
               type="button"
               className={`block max-w-full truncate text-left font-heading text-base font-bold ${accent.label}`}
               onClick={() => setEditing(true)}
-              title="Klik om naam te wijzigen"
+              title="Klik om naam te wijzigen (lokaal zonder cloudteam)"
             >
               {name || `Teamlid ${athleteIndex === 0 ? "A" : "B"}`}
             </button>

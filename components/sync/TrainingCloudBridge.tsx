@@ -27,6 +27,7 @@ export function TrainingCloudBridge({ children }: { children: React.ReactNode })
     if (!isSupabaseConfigured()) {
       setUserId(null);
       setTeams([]);
+      useTrackerStore.getState().setViewerUserId(null);
       useTrackerStore.getState().clearCloudWorkspace();
       return;
     }
@@ -35,6 +36,7 @@ export function TrainingCloudBridge({ children }: { children: React.ReactNode })
     if (!supabase) {
       setUserId(null);
       setTeams([]);
+      useTrackerStore.getState().setViewerUserId(null);
       return;
     }
 
@@ -43,6 +45,7 @@ export function TrainingCloudBridge({ children }: { children: React.ReactNode })
     } = await supabase.auth.getSession();
     const uid = session?.user.id ?? null;
     setUserId(uid);
+    useTrackerStore.getState().setViewerUserId(uid);
 
     if (!uid) {
       setTeams([]);
@@ -79,6 +82,7 @@ export function TrainingCloudBridge({ children }: { children: React.ReactNode })
       teamId,
       members: snap.data.members,
       completions: snap.data.completions,
+      viewerUserId: uid,
     });
   }, []);
 

@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 import type { DayWorkout } from "@/types";
+import { canEditAthleteSlot, resolveMyAthleteIndex } from "@/lib/athlete-ui";
 import { completionKey } from "@/lib/utils";
 import { useTrackerStore } from "@/lib/store";
-import { useTrainingCloud } from "@/context/TrainingCloudContext";
 import { appToast } from "@/lib/toast-store";
 import { pushCompletionSnapshot } from "@/lib/sync/push-completion";
 
@@ -24,30 +24,24 @@ export function CompletionDrawer({
   workout: DayWorkout | null;
 }) {
   const reduce = useReducedMotion();
-  const { userId } = useTrainingCloud();
   const names = useTrackerStore((s) => s.athleteNames);
   const activeTeamId = useTrackerStore((s) => s.activeTeamId);
   const memberUserIds = useTrackerStore((s) => s.memberUserIds);
+  const viewerUserId = useTrackerStore((s) => s.viewerUserId);
   const completionMeta = useTrackerStore((s) => s.completionMeta);
   const setCompletionMeta = useTrackerStore((s) => s.setCompletionMeta);
-  const [who, setWho] = useState<0 | 1>(0);
+  const [localWho, setLocalWho] = useState<0 | 1>(0);
+
+  const myAthlete = useMemo(
+    () => resolveMyAthleteIndex(memberUserIds, viewerUserId),
+    [memberUserIds, viewerUserId],
+  );
+  const who: 0 | 1 = myAthlete !== null ? myAthlete : localWho;
 
   const rowKey = completionKey(who, weekNumber, dayIndex);
   const meta = completionMeta[rowKey] ?? {};
 
-  const workspaceReady = !!(
-    activeTeamId &&
-    (memberUserIds[0] !== null || memberUserIds[1] !== null)
-  );
-
-  const canEditWho =
-    !userId || !workspaceReady
-      ? true
-      : (() => {
-          const mid = memberUserIds[who];
-          if (!mid) return false;
-          return mid === userId;
-        })();
+  const canEditWho = canEditAthleteSlot(viewerUserId, activeTeamId, memberUserIds, who);
 
   useEffect(() => {
     if (!open) return;
@@ -109,23 +103,14 @@ export function CompletionDrawer({
               <p className="text-[11px] text-faint">⏱ {workout.durationLabel}</p>
             </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-2 rounded-xl border border-edge bg-canvas p-1">
-              {([0, 1] as const).map((i) => {
-                const editable =
-                  !userId || !workspaceReady
-                    ? true
-                    : (() => {
-                        const mid = memberUserIds[i];
-                        if (!mid) return false;
-                        return mid === userId;
-                      })();
-                return (
+            {myAthlete === null ? (
+              <div className="mt-4 grid grid-cols-2 gap-2 rounded-xl border border-edge bg-canvas p-1">
+                {([0, 1] as const).map((i) => (
                   <button
                     key={i}
                     type="button"
-                    disabled={!editable}
-                    onClick={() => setWho(i)}
-                    className={`min-h-11 rounded-lg text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-35 ${
+                    onClick={() => setLocalWho(i)}
+                    className={`min-h-11 rounded-lg text-sm font-semibold transition ${
                       who === i
                         ? i === 0
                           ? "bg-run/15 text-run"
@@ -135,9 +120,14 @@ export function CompletionDrawer({
                   >
                     {names[i] || `Teamlid ${i === 0 ? "A" : "B"}`}
                   </button>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-4 rounded-xl border border-edge bg-canvas px-3 py-2.5 text-sm text-muted">
+                Je logt voor{" "}
+                <span className="font-semibold text-ink">{names[myAthlete] || "jezelf"}</span>
+              </p>
+            )}
 
             <div className="mt-4 space-y-3" key={rowKey}>
               <div>
@@ -224,9 +214,9 @@ export function CompletionDrawer({
               className="mt-5 w-full min-h-11 rounded-xl bg-gold font-semibold text-canvas"
               onClick={() => {
                 void (async () => {
-                  if (userId && workspaceReady && memberUserIds[who] === userId) {
+                  if (viewerUserId && activeTeamId && memberUserIds[who] === viewerUserId) {
                     const res = await pushCompletionSnapshot({
-                      userId,
+                      userId: viewerUserId,
                       athleteIndex: who,
                       weekNumber,
                       dayIndex,

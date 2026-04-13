@@ -21,6 +21,17 @@ export type TeamMemberSummary = {
   motivationNote: string | null;
 };
 
+function displayNameFromProfile(name: string | null | undefined, email: string | null | undefined) {
+  const n = name?.trim();
+  if (n) return n;
+  const em = email?.trim();
+  if (em?.includes("@")) {
+    const local = em.split("@")[0]?.trim();
+    if (local) return local;
+  }
+  return "Deelnemer";
+}
+
 export async function listMyTeamsAction(): Promise<ActionResult<{ teams: TeamSummary[] }>> {
   try {
     const supabase = await createSupabaseServerClient();
@@ -84,7 +95,7 @@ export async function getWorkspaceSnapshotAction(
 
     const { data: memberRows, error: membersError } = await supabase
       .from("team_members")
-      .select("user_id, motivation_note, profiles ( name )")
+      .select("user_id, motivation_note, profiles ( name, email )")
       .eq("team_id", teamId);
 
     if (membersError) return { ok: false, error: membersError.message };
@@ -92,12 +103,12 @@ export async function getWorkspaceSnapshotAction(
     const typedMembers = (memberRows ?? []) as Array<{
       user_id: string;
       motivation_note: string | null;
-      profiles: { name: string | null } | null;
+      profiles: { name: string | null; email: string | null } | null;
     }>;
 
     const members: TeamMemberSummary[] = typedMembers.map((m) => ({
       userId: m.user_id,
-      name: m.profiles?.name?.trim() || "Deelnemer",
+      name: displayNameFromProfile(m.profiles?.name, m.profiles?.email),
       motivationNote: m.motivation_note?.trim() || null,
     }));
 
