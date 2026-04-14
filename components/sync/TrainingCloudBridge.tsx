@@ -121,11 +121,19 @@ export function TrainingCloudBridge({ children }: { children: React.ReactNode })
       }, 0);
     };
     window.addEventListener("hyrox-workspace-refresh", onRefresh);
+    const onFocus = () => onRefresh();
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") onRefresh();
+    };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
       window.clearTimeout(initial);
       sub.subscription.unsubscribe();
       window.removeEventListener("hyrox-workspace-refresh", onRefresh);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [refreshWorkspace]);
 

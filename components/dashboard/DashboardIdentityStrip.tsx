@@ -52,12 +52,21 @@ export function DashboardIdentityStrip() {
           )}
         </p>
       </div>
-      <Link
-        href="/profile"
-        className="shrink-0 rounded-xl border border-edge-hover bg-canvas px-3 py-2 text-center text-xs font-semibold text-ink hover:border-gold/40 sm:min-h-10 sm:min-w-[140px] sm:py-2.5"
-      >
-        Profiel & team
-      </Link>
+      <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center">
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event("hyrox-workspace-refresh"))}
+          className="rounded-xl border border-edge-hover bg-canvas px-3 py-2 text-center text-xs font-semibold text-ink hover:border-gold/40 sm:min-h-10 sm:min-w-[140px] sm:py-2.5"
+        >
+          Ververs
+        </button>
+        <Link
+          href="/profile"
+          className="rounded-xl border border-edge-hover bg-canvas px-3 py-2 text-center text-xs font-semibold text-ink hover:border-gold/40 sm:min-h-10 sm:min-w-[140px] sm:py-2.5"
+        >
+          Profiel & team
+        </Link>
+      </div>
     </div>
   );
 }
