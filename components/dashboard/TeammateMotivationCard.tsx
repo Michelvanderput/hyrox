@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 
 import { updateMyTeamMotivationAction } from "@/app/actions/workspace";
+import { sendPushToTeammateAction } from "@/app/actions/push";
 import { useTrainingCloud } from "@/context/TrainingCloudContext";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { useTrackerStore } from "@/lib/store";
@@ -55,8 +56,22 @@ export function TeammateMotivationCard() {
       }
       appToast.success("Opgeslagen — je partner ziet dit op de homepagina.");
       window.dispatchEvent(new Event("hyrox-workspace-refresh"));
+
+      if (draft.trim()) {
+        const myName = myAthleteIdx !== null ? athleteNames[myAthleteIdx] : "Je teamgenoot";
+        void sendPushToTeammateAction(
+          activeTeamId,
+          {
+            title: `💬 Bericht van ${myName}`,
+            body: draft.trim().slice(0, 100),
+            tag: "teammate-message",
+            url: "/",
+          },
+          "teammate_message_enabled",
+        );
+      }
     });
-  }, [activeTeamId, draft]);
+  }, [activeTeamId, draft, myAthleteIdx, athleteNames]);
 
   if (!isSupabaseConfigured()) {
     return (

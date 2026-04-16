@@ -14,7 +14,6 @@ type CompletionRow = Database["public"]["Tables"]["completions"]["Row"];
 export function CompletionsRealtimeSync() {
   const { userId } = useTrainingCloud();
   const activeTeamId = useTrackerStore((s) => s.activeTeamId);
-
   useEffect(() => {
     if (!isSupabaseConfigured() || !userId || !activeTeamId) {
       return;
@@ -29,11 +28,37 @@ export function CompletionsRealtimeSync() {
 
     const handler = (payload: RealtimePostgresChangesPayload<CompletionRow>) => {
       if (payload.table !== "completions") return;
+      const row = (payload.new as CompletionRow | null) ?? null;
+
       useTrackerStore.getState().applyRemoteCompletionPayload({
         eventType: payload.eventType,
-        new: (payload.new as CompletionRow | null) ?? null,
+        new: row,
         old: (payload.old as CompletionRow | null) ?? null,
       });
+
+      if (
+        payload.eventType === "INSERT" ||
+        (payload.eventType === "UPDATE" && row?.completed)
+      ) {
+        if (row && row.user_id !== userId && row.completed) {
+          const { athleteNames: names, memberUserIds: ids } = useTrackerStore.getState();
+          const teammateIdx = ids[0] === row.user_id ? 0 : ids[1] === row.user_id ? 1 : null;
+          const teammateName = teammateIdx !== null ? names[teammateIdx] : "Je teamgenoot";
+          void fetch("/api/push/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userIds: [userId],
+              payload: {
+                title: "💪 Workout afgerond!",
+                body: `${teammateName} heeft een workout afgevinkt. Jij ook al?`,
+                tag: "teammate-workout",
+                url: "/",
+              },
+            }),
+          });
+        }
+      }
     };
 
     const channel = supabase
@@ -57,7 +82,7 @@ export function CompletionsRealtimeSync() {
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [userId, activeTeamId]);
+  }, [userId, activeTeamId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return null;
 }

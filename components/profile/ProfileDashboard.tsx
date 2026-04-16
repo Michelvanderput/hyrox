@@ -19,6 +19,7 @@ import { TeamSetupCard } from "@/components/profile/TeamSetupCard";
 import { TeamSwitcherCard } from "@/components/profile/TeamSwitcherCard";
 import { ProfileBasicsEditor } from "@/components/profile/ProfileBasicsEditor";
 import { UserSessionCard } from "@/components/profile/UserSessionCard";
+import { NotificationSettings } from "@/components/notifications/NotificationSettings";
 
 export function ProfileDashboard() {
   const { userId: cloudUserId, activeTeamId: cloudTeamId } = useTrainingCloud();
@@ -65,6 +66,7 @@ export function ProfileDashboard() {
       </header>
 
       <UserSessionCard />
+      <NotificationSettings />
       <TeamSetupCard />
       <TeamSwitcherCard />
 

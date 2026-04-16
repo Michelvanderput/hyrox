@@ -14,6 +14,7 @@ import { AthleteRingCard } from "@/components/dashboard/AthleteRingCard";
 import { PhaseBanner } from "@/components/dashboard/PhaseBanner";
 import { HomeWeekPreview } from "@/components/dashboard/HomeWeekPreview";
 import { NeonProgressBar } from "@/components/ui/NeonProgressBar";
+import { CreatineTracker } from "@/components/notifications/CreatineTracker";
 
 export function DashboardHome() {
   const week = getCurrentWeekNumber();
@@ -101,6 +102,8 @@ export function DashboardHome() {
           →
         </span>
       </Link>
+
+      <CreatineTracker />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <CountdownTimer />

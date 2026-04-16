@@ -162,6 +162,40 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["metrics"]["Insert"]>;
         Relationships: [];
       };
+      push_subscriptions: {
+        Row: {
+          id: string;
+          user_id: string;
+          endpoint: string;
+          p256dh: string;
+          auth: string;
+          workout_reminder_enabled: boolean;
+          workout_reminder_time: string;
+          creatine_reminder_enabled: boolean;
+          creatine_reminder_time: string;
+          teammate_workout_enabled: boolean;
+          teammate_message_enabled: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          endpoint: string;
+          p256dh: string;
+          auth: string;
+          workout_reminder_enabled?: boolean;
+          workout_reminder_time?: string;
+          creatine_reminder_enabled?: boolean;
+          creatine_reminder_time?: string;
+          teammate_workout_enabled?: boolean;
+          teammate_message_enabled?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["push_subscriptions"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
